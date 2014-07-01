@@ -43,18 +43,28 @@ function clickedGravePoint(e){
       success: function(graveDetail){
         //fill in grave point data in template
         $('#wrapper').after(graveDetail);
-        bindEvents();
-        var originalTopMargin = $('#grave_detail').css('top');
-        $('#grave_detail').css('top', '100%').animate({
-            top: originalTopMargin
-        }, 600);
+
+        //load persons
+        //TODO:als er geen personen zijn verwijder $('#people')
+        var personUrl = "templates/person.html";
+        $.ajax({
+            type:'GET',
+            url:personUrl,
+            success: function(person){
+              $('#people').html(person);
+              bindEvents();
+              var originalTopMargin = $('#grave_detail').css('top');
+              $('#grave_detail').css('top', '100%').animate({
+                  top: originalTopMargin
+              }, 600);
+            },error: function (xhr, ajaxOptions, thrownError) {}
+        });
       },
       error: function (xhr, ajaxOptions, thrownError) {}
   });
 }
 
 function closeGraveDetail(e){
-  console.log
   if(e){e.preventDefault();}
   $('#grave_detail').animate({
       top: $(window).height()+'px'
