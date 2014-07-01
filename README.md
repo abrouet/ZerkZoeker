@@ -8,7 +8,10 @@ Leiedal2
 [RubenMeul](https://github.com/RubenMeul “RubenMeul”)
 
 ### General Description
-This web app shows all locations of the graves at the cemeteries of Avelgem, Deerlijk and Waregem in Belgium.
+This web app (Zerk Zoeker) shows all locations of the graves at the cemeteries of Avelgem, Deerlijk and Waregem in Belgium.
+
+### Installation
+Backend uses Silex, composer file included.
 
 ### Copyright
 © OKFN Belgium vzw/asbl
