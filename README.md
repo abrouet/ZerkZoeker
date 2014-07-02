@@ -9,9 +9,12 @@ Leiedal2
 
 ### General Description
 This web app (Zerk Zoeker) shows all locations of the graves at the cemeteries of Avelgem, Deerlijk and Waregem in Belgium.
+This project is part of #oSoc14.
 
 ### Installation
-Backend uses Silex, composer file included.
+## Backend
+-> Uses Silex, composer file included.
+-> Database needed, definitions included in database.sql ; designed and tested for mariadb / mysql.
 
 ### Copyright
 © OKFN Belgium vzw/asbl
