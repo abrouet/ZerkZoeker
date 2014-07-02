@@ -5,6 +5,10 @@ var mapServerURL = "http://www.govmaps.eu/arcgis/rest/services/WAR/WAR_begraafpl
 
 var graveId;
 
+$(document).ready(function() {
+	console.log("ready");
+})
+
 require([
 	// Required to build the map and fetch the layer with graves
 	"esri/map",
@@ -43,6 +47,8 @@ require([
 		map = new Map(mapDivId);
 		var layer = new esri.layers.ArcGISTiledMapServiceLayer(mapServerURL);
 		map.addLayer(layer);
+
+		console.log("Start");
 
 		// Fetch the FeatureLayer which contains the gravepoints
 		var tombLayerURL = mapServerURL + "/0";
