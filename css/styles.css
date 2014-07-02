@@ -218,6 +218,12 @@ header h1{
     background-repeat: no-repeat;
     background-position: 5% 50%;
     padding-left: 13%;
+    text-transform: capitalize;
+}
+
+#scroller li span{
+  color: #920635;
+  border-bottom: 1px solid #920635;
 }
 
 #grave_detail{
