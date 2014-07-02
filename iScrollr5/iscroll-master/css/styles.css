@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+*:focus {
+    outline: 0;
+}
+
 @font-face{
   font-family: 'franchise';
   src: url('../fonts/Franchise-Bold.eot');
@@ -83,6 +87,7 @@ header{
 
 header h1 {
     color: #e8306e;
+    font-family: 'helvetica_neue_light';
 }
 
 #form {
@@ -100,14 +105,17 @@ header h1 {
     border: none;
     background: #ffffff;
     font-size: 3em;
+    font-family: 'helvetica_neue_light';
+    color: #e8306e;
 }
 
-#scroller ul{
+#live_search_wrapper ul{
     width: 100%;
     list-style: none;
+    font-family: 'helvetica_neue_light';
 }
 
-#scroller li:first-child{
+#live_search_wrapper li:first-child{
     height: 75px;
     line-height: 75px;
     width: 90%;
@@ -119,7 +127,7 @@ header h1 {
     margin-left: 5%;
 }
 
-#scroller li{
+#live_search_wrapper li{
     height: 75px;
     line-height: 75px;
     width: 90%;
@@ -130,7 +138,7 @@ header h1 {
     margin-left: 5%;
 }
 
-#scroller li:before {
+#live_search_wrapper li:before {
     content: "";
     display: block;
     background: url("../img/icon_person.png") no-repeat;
@@ -193,7 +201,7 @@ h4{
 
 #people_count{
   font-family: 'helvetica_neue_light';
-  width: 100%
+  width: 100%;
   height: 38px;
   line-height: 38px;
   text-align: center;
@@ -218,7 +226,7 @@ h4{
 }
 
 .person h5{
-  width: 100%
+  width: 100%;
   height: 45px;
   line-height: 38px;
   font-family: 'helvetica_neue_light';

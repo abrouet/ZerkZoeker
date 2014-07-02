@@ -8,12 +8,12 @@ $('document').ready(init);
 function init(){
   console.log('[main.js] init');
   bindEvents();
-  //clickedGravePoint();
+  clickedGravePoint();
 }
 
-$("#filter").keyup(function(){
-    if($("#scroller").hasClass('hide')){
-      $("#scroller").removeClass('hide');
+$("#filter").on('keyup', function(){
+    if($("#live_search_wrapper").hasClass('hide')){
+      $("#live_search_wrapper").removeClass('hide');
     }
 
     // Retrieve the input field text and reset the count to zero
@@ -62,3 +62,4 @@ function closeGraveDetail(e){
 function bindEvents(){
   $('#close_detail').on('click', closeGraveDetail);
 }
+

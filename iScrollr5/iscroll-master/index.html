@@ -10,21 +10,8 @@
 <script type="text/javascript" src="js/arcgis.com.3.9.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
 <link rel="stylesheet" type="text/css" href="css/styles.css">
-<script type="text/javascript">
-
-var myScroll;
-
-function loaded () {
-    $(".names li").each(function(){
-        $(this).hide();
-    });
-
-    myScroll = new IScroll('#wrapper', { mouseWheel: true });
-}
-
-</script>
 </head>
-<body onload="loaded()">
+<body>
 
 <div id="mapdiv"> </div>
 <div id="wrapper">
@@ -32,12 +19,12 @@ function loaded () {
         <h1>Avelgem</h1>
     </header>
     <div id="form">
-        <form id="live-search" action="" method="post">
+        <form id="live_search" action="" method="post">
             <input type="text" id="filter" value="" />
         </form>
     </div>
 
-    <div id="scroller" class="hide">
+    <div id="live_search_wrapper" class="hide">
         <ul class="names">
             <li>Peter Peeters</li>
             <li>Jan Jannsens</li>
