@@ -60,28 +60,63 @@ body,ul,li,p,h1,h2,h3,h4,h5,h6 {
 
 body {
     font-size: 12px;
-    font-family: ubuntu, helvetica, arial;
+    font-family: 'helvetica_neue', Helvetica, Arial, sans-serif;
     overflow: hidden; /* this is important to prevent the whole page to bounce */
 }
 
-#wrapper {
+#wrapper{
     position: absolute;
-    background-image: url('../img/background_map.jpg');
     top: 0;
-    z-index: 1;
-    width: 100%;
+    z-index: 2;
+    width: 200%;
     overflow: hidden;
-    height: 900px;
+    height: 100%;
+}
+
+#view1, #view2{
+  width: 50%;
+  height: 100%;
+  float: left;
+}
+
+.view{
+  width: 100%;
+  height: 100%;
+}
+
+#view_home{
+  width: 50%;
+  position: absolute;
+  z-index: 2;
+}
+
+#view_home #content{
+  background-color: #c5e488;
+  height: 100%;
+}
+
+#view_map{
+  background-color: #c5e488;
+  /*background-image: url('../img/background_map.jpg');*/
+}
+
+#mapdiv{
+    position: absolute;
+    z-index: 1;
 }
 
 header{
-    background-color: #ffffff;
-    padding: 0 2%;
-    opacity: 0.9;
-    height: 48px;
+  background-color: #ffffff;
+  opacity: 0.9;
+  height: 48px;
+
 }
 
-header h1, header #back_button{
+#view_map header{
+    padding: 0 2%;
+}
+
+#view_map header h1, #view_map header #back_button{
   float: left;
 }
 
@@ -98,12 +133,23 @@ header #back_button{
   width: 10%;
 }
 
-header h1 {
-    text-align: center;
+header h1{
+  text-align: center;
+  line-height: 52px;
+  height: 100%;
+  color: #e8306e;
+  font-family: 'franchise';
+  text-transform: uppercase;
+  font-size: 22pt;
+}
+
+#view_home header h1 {
+    width: 100%;
+    margin: 0 auto;
+}
+
+#view_map header h1 {
     width: 80%;
-    height: 100%;
-    line-height: 48px;
-    color: #e8306e;
 }
 
 #form {
@@ -162,7 +208,7 @@ header h1 {
 
 #grave_detail{
   top: 55%;
-  width: 100%;
+  width: 50%;
   height: 44%;
   position: absolute;
   background-image: url('../img/arrow_top.png');
@@ -191,7 +237,7 @@ header h1 {
 .data{
   width: 32.8%;
   float: left;
-  font-family: 'helvetica_neue_light';
+  font-family: 'helvetica_neue_light', Helvetica, Arial, sans-serif;
   font-size: 12pt;
   color: #71981e;
   text-align: center;
@@ -206,14 +252,14 @@ h3{
 }
 
 h4{
-  font-family: 'helvetica_neue_ultralight';
+  font-family: 'helvetica_neue_ultralight', Helvetica, Arial, sans-serif;
   font-weight: lighter;
   font-size: 42pt;
   color: #a2da2e;
 }
 
 #people_count{
-  font-family: 'helvetica_neue_light';
+  font-family: 'helvetica_neue_light', Helvetica, Arial, sans-serif;
   width: 100%
   height: 38px;
   line-height: 38px;
@@ -242,7 +288,7 @@ h4{
   width: 100%
   height: 45px;
   line-height: 38px;
-  font-family: 'helvetica_neue_light';
+  font-family: 'helvetica_neue_light', Helvetica, Arial, sans-serif;
   font-size: 14pt;
   text-align: center;
   color: #71981e;
@@ -257,7 +303,7 @@ h4{
   text-align: center;
   float: left;
   font-size: 10pt;
-  font-family: 'helvetica_neue_light';
+  font-family: 'helvetica_neue_light', Helvetica, Arial, sans-serif;
   color: #91ba3b;
 }
 
@@ -290,7 +336,7 @@ h4{
   text-align: center;
   text-decoration: none;
   color: white;
-  font-family: 'franchise';
+  font-family: 'franchise', Helvetica, Arial, sans-serif;
   font-size: 22pt;
 }
 

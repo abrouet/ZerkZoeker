@@ -9,10 +9,13 @@ var Map = (function()
     function Map()
     {
       console.log('[Map.js] init');
-      document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
-      bindEvents();
-      //clickedGravePoint();
-      buildMap();
+
+      //load template
+      $("#view2").html('').css('left',0).load("templates/map.html", function(){
+        bindEvents();
+        clickedGravePoint();
+        buildMap();
+      });
     }
 
     function filterKeyUp()
@@ -157,13 +160,13 @@ var Map = (function()
       if(e){e.preventDefault();}
       $('#grave_detail').animate({
           top: $(window).height()+'px'
-      }, 600, function(e){
-        //$(this).remove();
-      });
+      }, 600);
     }
 
     function tappedBackButton(e){
+      console.log("tappedBackButton");
       if(e){e.preventDefault();}
+      $(window).trigger("BACK_TO_HOME");
     }
 
     function bindEvents(){
