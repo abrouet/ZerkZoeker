@@ -87,7 +87,8 @@ header{
 
 header h1 {
     color: #e8306e;
-    font-family: 'helvetica_neue_light';
+    font-family: 'franchise';
+    text-transform: uppercase;
 }
 
 #form {
