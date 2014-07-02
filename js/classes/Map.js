@@ -35,6 +35,8 @@ var Map = (function()
 
             } else {
                 $(this).show();
+                $(".names .border_radius_bottom").removeClass('border_radius_bottom');
+                $(this).addClass("border_radius_bottom");
             }
         });
 

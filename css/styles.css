@@ -158,7 +158,9 @@ header h1{
 
 #form {
     z-index: 3;
-    width: 100%;
+    width: 86%;
+    margin: 0 auto;
+    height: 38px;
     padding: 0;
     margin-top: 25px;
     text-align: center;
@@ -180,12 +182,16 @@ header h1{
 
 #form input{
     height: 38px;
-    line-height: 38px;
-    width: 77%;
+    padding: 0 13px;
+    width: 100%;
     border: none;
-    background: #ffffff;
+    background-color: #ffffff;
     font-family: 'helvetica_neue';
     color: #e8306e;
+    background-image: url('../img/icon_search.png');
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 15%;
 }
 
 #scroller ul{
@@ -204,15 +210,10 @@ header h1{
     margin-top: 3px;
     margin-left: 7%;
     font-size: 16px;
-}
-
-#scroller li:before {
-    content: "";
-    display: block;
-    background: url("../img/icon_person.png") no-repeat;
-    width: 25px;
-    height: 25px;
-    float: left;
+    background-image: url("../img/icon_person.png");
+    background-repeat: no-repeat;
+    background-position: 5% 50%;
+    padding-left: 13%;
 }
 
 #grave_detail{
@@ -338,9 +339,6 @@ h4{
   height: 38px;
   line-height: 40px;
   display: block;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
   background-color: #a2da2e;
   text-align: center;
   text-decoration: none;
@@ -368,6 +366,21 @@ h4{
 
 .border_left_dark{
   border-left: 1px solid #91ba3b;
+}
+
+.border_radius{
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.border_radius_bottom{
+  -webkit-border-bottom-right-radius: 5px;
+  -webkit-border-bottom-left-radius: 5px;
+  -moz-border-radius-bottomright: 5px;
+  -moz-border-radius-bottomleft: 5px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
 .clear{
