@@ -108,6 +108,9 @@ var Map = (function()
             SimpleFillSymbol.STYLE_NULL,
             new SimpleLineSymbol(new Color([255, 0, 0]), 2), new Color([0, 0, 0, 0])
           );
+
+          // The circle which represents the perimeter in which to look for graves
+          // this is defined here because it's used in multiple functions.
           var circle;
 
           // The function to execute when clicking on the map
@@ -139,8 +142,6 @@ var Map = (function()
 
           /** The selection function which fetches the GraveID from the FeatureLayer,
           * this GraveID is needed to request the personal info about from the database.
-          * TO DO: implement callback to a function which fetched information from
-          *        the database and adds it to the fields on the webpage
           */
           function selectInBuffer(response){
             var features = response.features;
@@ -155,9 +156,8 @@ var Map = (function()
                   var code = json.features[0].attributes.grafcode;
                   graveId = code;
                 });
-
-              console.log("GraveId: " + graveId);
-
+              // Pass the id to the function which will load the data from the database
+              loadPersonData(graveId);
             }
           }
       });
@@ -177,11 +177,18 @@ var Map = (function()
             graveY = json.features[0].geometry.y        
           });
         console.log(graveX + ', ' + graveY);
+        // Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( {wkid:31370} ) ));
         /** DOES NOT WORK: .centerAt is an undefined function and only defined in the esri namespace
         *                  which was define das being required in the buildMap function.
         *   POSSIBLE SOLUTION: no idea...
         */
-        // Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( {wkid:31370} ) ));
+      }
+
+      function loadPersonData(graveId) {
+        /** TODO: load the data from the backend and fill the nevessary labels in the html
+        */
+        // ajax call to backend
+
       }
 
     function clickedGravePoint(e){
