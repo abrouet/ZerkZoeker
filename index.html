@@ -5,21 +5,9 @@
 
 <title>Begraafplaatsen</title>
 <link rel="stylesheet" type="text/css" href="css/styles.css">
-<script type="text/javascript">
 
-var myScroll;
-
-function loaded () {
-    $(".names li").each(function(){
-        $(this).hide();
-    });
-
-    myScroll = new IScroll('#wrapper', { mouseWheel: true });
-}
-
-</script>
 </head>
-<body onload="loaded()">
+<body>
 
 <div id="mapdiv"> </div>
 <div id="wrapper">
@@ -28,11 +16,10 @@ function loaded () {
         <h1>Avelgem</h1>
         <div class="clear"></div>
     </header>
-    <div id="form">
-        <form id="live-search" action="" method="post">
+        <form id="form" action="" method="post">
+            <img src="img/icon_search.png" />
             <input type="text" id="filter" value="" />
         </form>
-    </div>
 
     <div id="scroller" class="hide">
         <ul class="names">

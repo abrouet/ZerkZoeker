@@ -11,7 +11,7 @@ var Map = (function()
       console.log('[Map.js] init');
       document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
       bindEvents();
-      //clickedGravePoint();
+      clickedGravePoint();
       buildMap();
     }
 
