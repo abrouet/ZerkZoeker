@@ -65,12 +65,12 @@ body {
 }
 
 #wrapper {
+    position: absolute;
+    top: 0;
     z-index: 1;
     width: 100%;
     overflow: hidden;
-    background-image:url('../img/background_map.jpg');
     height: 900px;
-
 }
 
 header{
@@ -296,4 +296,8 @@ h4{
 
 .clear{
   clear: both;
+}
+
+.hide{
+  display: none;
 }

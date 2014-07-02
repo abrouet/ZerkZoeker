@@ -7,6 +7,7 @@
 
 <script type="text/javascript" src="js/iscroll.js"></script>
 <script type="text/javascript" src="js/jquery-1.11.1.js"></script>
+<script type="text/javascript" src="js/arcgis.com.3.9.js"></script>
 <script type="text/javascript" src="js/map.js"></script>
 <link rel="stylesheet" type="text/css" href="css/styles.css">
 <script type="text/javascript">
@@ -25,6 +26,7 @@ function loaded () {
 </head>
 <body onload="loaded()">
 
+<div id="mapdiv"> </div>
 <div id="wrapper">
     <header>
         <h1>Avelgem</h1>
@@ -35,7 +37,7 @@ function loaded () {
         </form>
     </div>
 
-    <div id="scroller">
+    <div id="scroller" class="hide">
         <ul class="names">
             <li>Peter Peeters</li>
             <li>Jan Jannsens</li>
@@ -145,7 +147,7 @@ function loaded () {
         </ul>
     </div>
 </div>
-<div id="grave_detail">
+<div id="grave_detail" class="hide">
   <div id="grave_detail_inner">
     <div id="grave_detail_wrapper">
       <div id="meta_data">

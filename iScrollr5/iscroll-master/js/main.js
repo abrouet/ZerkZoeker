@@ -8,10 +8,13 @@ $('document').ready(init);
 function init(){
   console.log('[main.js] init');
   bindEvents();
-  clickedGravePoint();
+  //clickedGravePoint();
 }
 
 $("#filter").keyup(function(){
+    if($("#scroller").hasClass('hide')){
+      $("#scroller").removeClass('hide');
+    }
 
     // Retrieve the input field text and reset the count to zero
     var name = $(this).val();
@@ -36,7 +39,9 @@ $("#filter").keyup(function(){
 
 function clickedGravePoint(e){
   if(e){e.preventDefault();}
-
+    if($("#grave_detail").hasClass('hide')){
+      $("#grave_detail").removeClass('hide');
+    }
     //load persons
     //TODO:als er geen personen zijn verwijder $('#people')
     var originalTopMargin = $('#grave_detail').css('top');
@@ -50,7 +55,7 @@ function closeGraveDetail(e){
   $('#grave_detail').animate({
       top: $(window).height()+'px'
   }, 600, function(e){
-    $(this).remove();
+    //$(this).remove();
   });
 }
 
