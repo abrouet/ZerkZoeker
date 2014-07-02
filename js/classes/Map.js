@@ -101,8 +101,7 @@ var Map = (function()
           var tombLayerURL = mapServerURL + "/0";
           var featureLayer = new FeatureLayer(tombLayerURL);
 
-          Map.showZoomSlider();
-          Map.centerAndZoom(new Point(5050, 150, new SpatialReference({wkid:31370})), 8);
+          Map.centerAndZoom(new Point(5000, 110, new SpatialReference({wkid:31370})), 5);
 
           // Create the circle to display when clicking on the map
           var circleSymb = new SimpleFillSymbol(
@@ -131,12 +130,18 @@ var Map = (function()
             featureLayer.queryFeatures(query, selectInBuffer);
           });
 
+          // Zooms and centers the map when clicking on it
           Map.on("click", function(evt) {
             console.log('ClickLocation: ' + evt.mapPoint.x+', '+evt.mapPoint.y);
-            Map.centerAt(evt.mapPoint);
+            var centerOnThis = new Point(evt.mapPoint.x, evt.mapPoint.y - 4, new SpatialReference({wkid:31370}));
+            Map.centerAndZoom(centerOnThis, 20);
           })
 
-          // The selection function which fetches the GraveID from the FeatureLayer
+          /** The selection function which fetches the GraveID from the FeatureLayer,
+          * this GraveID is needed to request the personal info about from the database.
+          * TO DO: implement callback to a function which fetched information from
+          *        the database and adds it to the fields on the webpage
+          */
           function selectInBuffer(response){
             var features = response.features;
             if(features.length > 0) {
@@ -172,7 +177,11 @@ var Map = (function()
             graveY = json.features[0].geometry.y
           });
         console.log(graveX + ', ' + graveY);
-        //Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( {wkid:31370} ) ));
+        /** DOES NOT WORK: .centerAt is an undefined function and only defined in the esri namespace
+        *                  which was define das being required in the buildMap function.
+        *   POSSIBLE SOLUTION: no idea...
+        */
+        // Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( {wkid:31370} ) ));
       }
 
     function clickedGravePoint(e){
