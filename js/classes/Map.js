@@ -174,7 +174,7 @@ var Map = (function()
             var json = $.parseJSON(data);
             console.log(data);
             graveX = json.features[0].geometry.x
-            graveY = json.features[0].geometry.y        
+            graveY = json.features[0].geometry.y
           });
         console.log(graveX + ', ' + graveY);
         // Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( {wkid:31370} ) ));

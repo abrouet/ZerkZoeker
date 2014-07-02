@@ -112,13 +112,13 @@ body {
 
 header{
   background-color: #ffffff;
-  opacity: 0.9;
   height: 48px;
 
 }
 
 #view_map header{
-    padding: 0 2%;
+  padding: 0 2%;
+  opacity: 0.9;
 }
 
 #view_map header h1, #view_map header #back_button{
