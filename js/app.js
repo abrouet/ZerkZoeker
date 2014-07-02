@@ -22,7 +22,7 @@ var home, map;
 
     function backToHomeTransition(e){
       console.log('[app.js] backToHomeTransition');
-      $("#view1").load("templates/home.html");
+      home = new Home();
       $('#wrapper, #mapdiv').animate({
         left: 0
       }, 500, function(e){
