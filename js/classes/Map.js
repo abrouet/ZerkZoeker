@@ -12,13 +12,14 @@ var Map = (function()
       //load template
       $("#view2").html('').css('left',0).load("templates/map.html", function(){
         bindEvents();
-        clickedGravePoint();
+        //clickedGravePoint();
         buildMap();
       });
     }
 
     function filterKeyUp()
     {
+        closeGraveDetail();
         if($("#scroller").hasClass('hide')){
           $("#scroller").removeClass('hide');
         }
@@ -31,11 +32,17 @@ var Map = (function()
 
             if ($(this).text().search(new RegExp(name, "i")) < 0) {
                 $(this).hide();
-
             } else {
-                $(this).show();
+                var substr = $(this).text().toLowerCase().split(name);
+                var fixedstr = '';
+                for(var i=0; i<substr.length; i++){
+                  fixedstr += substr[i];
+                  if(i != substr.length-1){
+                    fixedstr += '<span>'+name+'</span>';
+                  }
+                }
                 $(".names .border_radius_bottom").removeClass('border_radius_bottom');
-                $(this).addClass("border_radius_bottom");
+                $(this).html(fixedstr).show().addClass("border_radius_bottom");
             }
         });
 

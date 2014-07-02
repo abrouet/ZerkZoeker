@@ -97,6 +97,7 @@ body {
 #view_home #content{
   background-color: #c5e488;
   height: 100%;
+  padding-top: 25px;
 }
 
 #view_map{
@@ -162,8 +163,11 @@ header h1{
     margin: 0 auto;
     height: 38px;
     padding: 0;
-    margin-top: 25px;
     text-align: center;
+}
+
+#view_map #form{
+  margin-top: 25px;
 }
 
 #form img, input{
@@ -214,6 +218,12 @@ header h1{
     background-repeat: no-repeat;
     background-position: 5% 50%;
     padding-left: 13%;
+    text-transform: capitalize;
+}
+
+#scroller li span{
+  color: #920635;
+  border-bottom: 1px solid #920635;
 }
 
 #grave_detail{
