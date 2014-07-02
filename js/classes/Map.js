@@ -162,8 +162,15 @@ var Map = (function()
       });
     }
 
+    function tappedBackButton(e){
+      if(e){e.preventDefault();}
+    }
+
     function bindEvents(){
       $('#close_detail').on('click', closeGraveDetail);
+      $('#close_detail').on('touchend', closeGraveDetail);
+      $('#back_button').on('click', tappedBackButton);
+      $('#back_button').on('touchend', tappedBackButton);
       $("#filter").on('keyup', filterKeyUp);
     }
 

@@ -65,8 +65,8 @@ body {
 }
 
 #wrapper {
-    background-image: url("../img/background_map.jpg");
     position: absolute;
+    background-image: url('../img/background_map.jpg');
     top: 0;
     z-index: 1;
     width: 100%;
@@ -75,14 +75,34 @@ body {
 }
 
 header{
-    z-index: 2;
-    text-align: center;
     background-color: #ffffff;
-    padding: 2%;
+    padding: 0 2%;
     opacity: 0.9;
+    height: 48px;
+}
+
+header h1, header #back_button{
+  float: left;
+}
+
+header span{
+  display: none;
+}
+
+header #back_button{
+  display: block;
+  background-image: url('../img/icon_back_arrow.png');
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  height: 100%;
+  width: 10%;
 }
 
 header h1 {
+    text-align: center;
+    width: 80%;
+    height: 100%;
+    line-height: 48px;
     color: #e8306e;
 }
 
