@@ -20,6 +20,7 @@ var Map = (function()
 
     function filterKeyUp()
     {
+        closeGraveDetail();
         if($("#scroller").hasClass('hide')){
           $("#scroller").removeClass('hide');
         }
