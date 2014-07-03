@@ -112,14 +112,16 @@ var Map = (function()
           var tombLayerURL = mapServerURL + "/0";
           var featureLayer = new FeatureLayer(tombLayerURL);
 
-          Map.showZoomSlider();
-          Map.centerAndZoom(new Point(5050, 150, new SpatialReference({wkid:31370})), 8);
+          Map.centerAndZoom(new Point(5000, 110, new SpatialReference({wkid:31370})), 5);
 
           // Create the circle to display when clicking on the map
           var circleSymb = new SimpleFillSymbol(
             SimpleFillSymbol.STYLE_NULL,
             new SimpleLineSymbol(new Color([255, 0, 0]), 2), new Color([0, 0, 0, 0])
           );
+
+          // The circle which represents the perimeter in which to look for graves
+          // this is defined here because it's used in multiple functions.
           var circle;
 
           // The function to execute when clicking on the map
@@ -142,13 +144,16 @@ var Map = (function()
             featureLayer.queryFeatures(query, selectInBuffer);
           });
 
+          // Zooms and centers the map when clicking on it
           Map.on("click", function(evt) {
             console.log('ClickLocation: ' + evt.mapPoint.x+', '+evt.mapPoint.y);
             Map.centerAt(evt.mapPoint);
             clickedGravePoint();
           })
 
-          // The selection function which fetches the GraveID from the FeatureLayer
+          /** The selection function which fetches the GraveID from the FeatureLayer,
+          * this GraveID is needed to request the personal info about from the database.
+          */
           function selectInBuffer(response){
             var features = response.features;
             if(features.length > 0) {
@@ -162,9 +167,8 @@ var Map = (function()
                   var code = json.features[0].attributes.grafcode;
                   graveId = code;
                 });
-
-              console.log("GraveId: " + graveId);
-
+              // Pass the id to the function which will load the data from the database
+              loadPersonData(graveId);
             }
           }
       });
