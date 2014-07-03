@@ -20,7 +20,7 @@ var Home = (function()
                   var html = data.replace('place', cemeteries[i]);
                   if(cemeteries[i].length > 0){
                     $('#results').append(html);
-                    $('#results .location:last-child').addClass('border_radius_bottom').on('click', tappedLocation).css('opacity', 0).delay(i*25).animate({
+                    $('#results .location:last-child').on('click', tappedLocation).on('touchend', tappedLocation).css('opacity', 0).delay(i*25).animate({
                       opacity: 1
                     }, 350);
                   }
@@ -33,10 +33,12 @@ var Home = (function()
               ((parseFloat($('#results .location:last-child').css('height'))+parseFloat($('.location').css('margin-top')))
               *cemeteries.length)+'px');
               var resultsScroller = new IScroll('#view_home #wrapper');
+              bindEvents();
             });
           },error: function (xhr, ajaxOptions, thrownError){}
         });
       });
+
     }
 
     function tappedLocation(e){
@@ -48,7 +50,31 @@ var Home = (function()
       ns.localStorage;
       storage = $.localStorage;
       storage.set('zz_location',$(this).text());
-      console.log(storage.get('zz_location'));
+      $(window).trigger("GO_TO_MAP");
+    }
+
+    function filterKeyUp(e){
+      var search = $(this).val();
+      if(search.length > 0){
+        //update cities
+        $("#view_home .location").each(function(index, value) {
+            if ($(this).text().search(new RegExp(search, "i")) < 0) {
+              $(this).hide();
+            }else{
+              var html = addSpanToFilterResult($(this), search);
+              $("#view_home .location").removeClass('border_radius_bottom');
+              $(this).html(html).show().addClass("border_radius_bottom");
+            }
+        });
+      }else{
+        $("#view_home .location").each(function(index, value) {
+          $(this).html($(this).html().replace('<span>','').replace('</span>','')).show();
+        });
+      }
+    }
+
+    function bindEvents(){
+      $("#view_home #filter").on('keyup', filterKeyUp);
     }
 
     return Home;

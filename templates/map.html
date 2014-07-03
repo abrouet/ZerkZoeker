@@ -8,8 +8,9 @@
       <input id="filter" class="border_radius" type="text" value="" placeholder="Search by name or year... "/>
   </form>
 
-  <div id="scroller" class="hide">
-      <ul class="names">
+  <div id="names_wrapper" class="hide">
+    <div id="scroller">
+      <ul id="names">
           <li>Peter Peeters</li>
           <li>Jan Jannsens</li>
           <li>Hans Hanssens</li>
@@ -116,8 +117,10 @@
           <li>William Joyce</li>
           <li>Austin Pacheco</li>
       </ul>
+    </div>
   </div>
 
+  <a id="close_map_detail_maplink" class="hide" href="#"><span>close map detail</span></a>
   <div id="grave_detail" class="hide">
     <div id="grave_detail_inner">
       <div id="grave_detail_wrapper">

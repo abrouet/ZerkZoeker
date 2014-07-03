@@ -3,6 +3,17 @@ function testFunction(){
   console.log('[function.js] testFunction');
 }
 
+function addSpanToFilterResult(filterResult, filter){
+  var substr = filterResult.text().toLowerCase().split(filter);
+  var fixedstr = '';
+  for(var i=0; i<substr.length; i++){
+    fixedstr += substr[i];
+    if(i != substr.length-1){
+      fixedstr += '<span>'+filter+'</span>';
+    }
+  }
+  return fixedstr;
+}
 
 /**
  * Configuration variables for the different municipalities. This includes mapserver information,
@@ -159,5 +170,3 @@ function getGraveId(municip, json, callback) {
 function getGraveLocation(municip, json, callback) {
 	municipVars[municip].extractGraveLoc(json, callback);
 }
-
-

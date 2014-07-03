@@ -108,7 +108,7 @@ ul{
   padding-top: 25px;
 }
 
-#view_home #wrapper{
+#view_home #wrapper, #view_map #names_wrapper{
   position: absolute;
   z-index: 1;
   overflow: hidden;
@@ -123,24 +123,32 @@ ul{
   width: 100%;
 }
 
-#results{
+#results, #names{
   width: 86%;
   margin: 0 auto;
 }
 
-.location{
+#scroller li{
   list-style-type: none;
   font-family: 'helvetica_neue_light';
   margin-top: 2px;
   padding: 13px 0px 13px 15%;
   font-size: 10pt;
   background-color: #f3f3f3;
-  background-image: url('../img/location_marker.png');
   background-repeat: no-repeat;
   height: 38px;
   width: 100%;
   color: #e8306e;
   background-position: 5% 50%;
+  text-transform: capitalize;
+}
+
+.location{
+  background-image: url('../img/location_marker.png');
+}
+
+#names_wrapper .person{
+  background-image: url('../img/icon_person.png');
 }
 
 #view_map{
@@ -159,7 +167,6 @@ ul{
 header{
   background-color: #ffffff;
   height: 48px;
-
 }
 
 #view_map header{
@@ -244,32 +251,25 @@ header h1{
     padding-left: 15%;
 }
 
-#view_map #scroller ul{
-    width: 100%;
-    list-style: none;
-    font-family: 'helvetica_neue';
-}
-
-
-#view_map #scroller li{
-    height: 38px;
-    line-height: 38px;
-    width: 86%;
-    background: #f3f3f3;
-    color: #e8306e;
-    margin-top: 3px;
-    margin-left: 7%;
-    font-size: 16px;
-    background-image: url("../img/icon_person.png");
-    background-repeat: no-repeat;
-    background-position: 5% 50%;
-    padding-left: 13%;
-    text-transform: capitalize;
-}
-
-#view_map #scroller li span{
+#scroller li span{
   color: #920635;
   border-bottom: 1px solid #920635;
+}
+
+#close_map_detail{
+  width: 100%;
+}
+
+#close_map_detail_maplink{
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+  height: 100%;
+  top: 110px;
+}
+
+#close_map_detail_maplink span{
+  display: none;
 }
 
 #grave_detail{
@@ -277,6 +277,7 @@ header h1{
   width: 50%;
   height: 44%;
   position: absolute;
+  z-index: 2;
   background-image: url('../img/arrow_top.png');
   background-repeat: no-repeat;
   background-position: 50% 0;
@@ -339,11 +340,6 @@ h4{
 #people_count span{
   color: #466701;
   font-weight: bolder;
-}
-
-.person{
-  background-color: #fbfbfb;
-  margin-bottom: 10px;
 }
 
 .person:last-child{
