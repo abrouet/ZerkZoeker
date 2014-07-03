@@ -15,20 +15,25 @@ var Map = (function()
         //set default height (no interefering with events from map)
         defaultGraveDetailTop = $(window).height()*0.55;
         setWrapperHeight(defaultWrapperHeight);
+
+        //set location
+        storage = $.localStorage;
+        $('#view_map header h1').text(storage.get('zz_location'));
+
         bindEvents();
         //clickedGravePoint();
         buildMap();
       });
     }
 
-    function filterKeyUp()
+    function filterKeyUp(e)
     {
         setWrapperHeight($(window).height());
         if(parseFloat($('#grave_detail').css('top')) < $(window).height()){
           closeGraveDetail();
         }
-        if($("#scroller").hasClass('hide')){
-          $("#scroller").removeClass('hide');
+        if($("#names_wrapper").hasClass('hide')){
+          $("#names_wrapper").removeClass('hide');
         }
 
         // Retrieve the input field text and reset the count to zero
@@ -36,24 +41,17 @@ var Map = (function()
 
         if(name.length == 0){
           setWrapperHeight(defaultWrapperHeight);
+          $("#names_wrapper").addClass('hide');
         }
 
         // Loop through the comment list
         $(".names li").each(function(){
-
             if ($(this).text().search(new RegExp(name, "i")) < 0) {
                 $(this).hide();
             } else {
-                var substr = $(this).text().toLowerCase().split(name);
-                var fixedstr = '';
-                for(var i=0; i<substr.length; i++){
-                  fixedstr += substr[i];
-                  if(i != substr.length-1){
-                    fixedstr += '<span>'+name+'</span>';
-                  }
-                }
+                var html = addSpanToFilterResult($(this), name);
                 $(".names .border_radius_bottom").removeClass('border_radius_bottom');
-                $(this).html(fixedstr).show().addClass("border_radius_bottom");
+                $(this).html(html).show().addClass("border_radius_bottom");
             }
         });
 
@@ -80,7 +78,9 @@ var Map = (function()
         "esri/graphic", "esri/InfoTemplate",
         "esri/symbols/SimpleMarkerSymbol",
         "esri/symbols/SimpleLineSymbol",
-        "esri/symbols/SimpleFillSymbol",
+        //"esri/symbols/SimpleFillSymbol",
+        "esri/symbols/PictureMarkerSymbol",
+        "esri/symbols/PictureFillSymbol",
         "esri/renderers/SimpleRenderer",
         "esri/config",
         "esri/Color",
@@ -98,7 +98,9 @@ var Map = (function()
                     InfoTemplate,
                     SimpleMarkerSymbol,
                     SimpleLineSymbol,
-                    SimpleFillSymbol,
+                    //SimpleFillSymbol,
+                    PictureMarkerSymbol,
+                    PictureFillSymbol,
                     SimpleRenderer,
                     esriConfig,
                     Color) {
@@ -115,27 +117,30 @@ var Map = (function()
           Map.centerAndZoom(new Point(5000, 110, new SpatialReference({wkid:31370})), 5);
 
           // Create the circle to display when clicking on the map
-          var circleSymb = new SimpleFillSymbol(
-            SimpleFillSymbol.STYLE_NULL,
-            new SimpleLineSymbol(new Color([255, 0, 0]), 2), new Color([0, 0, 0, 0])
-          );
+          /*var locationMarkerUrl = 'img/icon_map_marker.png';
+          var sls = new SimpleLineSymbol(SimpleFillSymbol.STYLE_NULL, new Color([255, 0, 0]), 2);
+          var circleSymb = new PictureFillSymbol(locationMarkerUrl,sls,35,35);*/
+
+          var locationMarkerUrl = 'img/icon_map_marker.png';
+          var circleSymb = new PictureMarkerSymbol(locationMarkerUrl,35,35);
 
           // The circle which represents the perimeter in which to look for graves
           // this is defined here because it's used in multiple functions.
-          var circle;
+          var circle;// Zooms and centers the map when clicking on it
 
           // The function to execute when clicking on the map
           Map.on("click", function(evt){
+            Map.centerAndZoom(evt.mapPoint, 10);
             // Create the geometric circle in which to search for graves
             circle = new Circle({
               center: evt.mapPoint,			// Centered on the point of clicking
-              radius: 0.35,							// Radius in which to look for graves
+              radius: 0.85,							// Radius in which to look for graves
               radiusUnit: "esriMeters"	// The unit of the radius, in this case meters
             });
             // Clear the graphics on the map and add the new circle
             Map.graphics.clear();
             Map.infoWindow.hide();
-            var graphic = new Graphic(circle, circleSymb);
+            var graphic = new Graphic(evt.mapPoint, circleSymb);
             Map.graphics.add(graphic);
 
             // Create a query for the FeatureLayer to search for graves within the perimeter
@@ -143,13 +148,6 @@ var Map = (function()
             query.geometry = circle.getExtent();
             featureLayer.queryFeatures(query, selectInBuffer);
           });
-
-          // Zooms and centers the map when clicking on it
-          Map.on("click", function(evt) {
-            console.log('ClickLocation: ' + evt.mapPoint.x+', '+evt.mapPoint.y);
-            Map.centerAt(evt.mapPoint);
-            clickedGravePoint();
-          })
 
           /** The selection function which fetches the GraveID from the FeatureLayer,
           * this GraveID is needed to request the personal info about from the database.
@@ -168,9 +166,26 @@ var Map = (function()
                   graveId = code;
                 });
               // Pass the id to the function which will load the data from the database
-              loadPersonData(graveId);
+              loadGraveData(graveId);
             }
           }
+      });
+    }
+
+    function loadGraveData(graveId){
+      console.log('[Map.js] loadGraveData with id: '+graveId);
+      ///getPersonByNameAtCemetery/
+      storage = $.localStorage;
+      var url = 'backend/index.php/getPersonByCodeAtCemetery/'+storage.get('zz_location')+'/'+graveId;
+      $.ajax({
+        dataType: "json",
+        type:'GET',
+        url:url,
+        success: function(graveData){
+          console.log('[Map.js] ajax success:');
+          console.log(graveData);
+          clickedGravePoint();
+        },error: function (xhr, ajaxOptions, thrownError){}
       });
     }
 
@@ -192,21 +207,22 @@ var Map = (function()
     }
 
     function clickedGravePoint(e){
-      console.log('[Map.js] clickedGravePoint');
       setWrapperHeight($(window).height());
       if(e){e.preventDefault();}
-        if($("#grave_detail").hasClass('hide')){
-          $("#grave_detail").removeClass('hide');
-        }
-        //load persons
-        //TODO:als er geen personen zijn verwijder $('#people')
-        $('#grave_detail').css('top', '100%').animate({
-            top: defaultGraveDetailTop
-        }, 600);
+      $('#close_map_detail_maplink').show();
+      if($("#grave_detail").hasClass('hide')){
+        $("#grave_detail").removeClass('hide');
+      }
+      //load persons
+      //TODO:als er geen personen zijn verwijder $('#people')
+      $('#grave_detail').css('top', '100%').animate({
+          top: defaultGraveDetailTop
+      }, 600);
     }
 
     function closeGraveDetail(e){
       if(e){e.preventDefault();}
+      $('#close_map_detail_maplink').hide();
       $('#grave_detail').animate({
           top: $(window).height()+'px'
       }, 600, function(e){
@@ -217,17 +233,18 @@ var Map = (function()
     }
 
     function tappedBackButton(e){
-      console.log("tappedBackButton");
       if(e){e.preventDefault();}
       $(window).trigger("BACK_TO_HOME");
     }
 
-    function bindEvents(){
+    function bindEvents(){;
       $('#close_detail').on('click', closeGraveDetail);
       $('#close_detail').on('touchend', closeGraveDetail);
       $('#back_button').on('click', tappedBackButton);
       $('#back_button').on('touchend', tappedBackButton);
-      $("#filter").on('keyup', filterKeyUp);
+      $('#close_map_detail_maplink').on('click', closeGraveDetail);
+      $('#close_map_detail_maplink').on('touchend', closeGraveDetail);
+      $("#view_map #filter").on('keyup', filterKeyUp);
     }
 
     //utilities

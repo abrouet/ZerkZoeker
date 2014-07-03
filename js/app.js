@@ -2,7 +2,7 @@
  * Created by ruben on 1-7-14.
  */
 
-var home, map;
+var home, map, transitionDuration;
 
 (function()
 {
@@ -10,6 +10,9 @@ var home, map;
     {
       console.log('[main.js] init');
       document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+      transitionDuration = 500;
+
+      //Create View
       map = new Map();
       //home = new Home();
 
@@ -18,17 +21,27 @@ var home, map;
 
       //dispatched events
       $(window).on("BACK_TO_HOME", backToHomeTransition);
+      $(window).on("GO_TO_MAP", goToHomeTransition);
     }
 
     function backToHomeTransition(e){
       console.log('[app.js] backToHomeTransition');
       home = new Home();
-      var duration = 500;
-      $('#mapdiv').animate({left:$(window).width()}, duration);
+      $('#mapdiv').animate({left:$(window).width()}, transitionDuration);
       $('#wrapper').animate({
         left: 0
-      }, duration, function(e){
+      }, transitionDuration, function(e){
         $("#view2").html('');
+      });
+    }
+
+    function goToHomeTransition(e){
+      map = new Map();
+      $('#mapdiv').animate({left:0}, transitionDuration);
+      $('#wrapper').animate({
+        left: -$(window).width()
+      }, transitionDuration, function(e){
+        $("#view1").html('');
       });
     }
 
