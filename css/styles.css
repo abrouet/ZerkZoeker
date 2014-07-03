@@ -147,7 +147,7 @@ ul{
   background-image: url('../img/location_marker.png');
 }
 
-#names_wrapper .person, #home_view .person{
+#names_wrapper .person, #view_home .person{
   background-image: url('../img/icon_person.png');
   text-transform:capitalize;
 }
