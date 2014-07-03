@@ -13,11 +13,11 @@ var home, map, transitionDuration;
       transitionDuration = 500;
 
       //Create View
-      map = new Map();
-      //home = new Home();
+      //map = new Map();
+      home = new Home();
 
       //set default position wrapper
-      $("#wrapper").css('left',-$(window).width());
+      //$("#wrapper").css('left',-$(window).width());
 
       //dispatched events
       $(window).on("BACK_TO_HOME", backToHomeTransition);
