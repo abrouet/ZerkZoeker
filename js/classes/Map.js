@@ -4,13 +4,17 @@ var Map = (function()
     var mapDivId = "mapdiv"; // The id of the div in which to display the map
     var mapServerURL = "http://www.govmaps.eu/arcgis/rest/services/WAR/WAR_begraafplaats/MapServer"; // The url of the server where the arcgis map is stored
 
-    var graveId;
+    var graveId, defaultGraveDetailTop;
+    var defaultWrapperHeight = '112px';
 
     function Map()
     {
       console.log('[Map.js] init');
       //load template
       $("#view2").html('').css('left',0).load("templates/map.html", function(){
+        //set default height (no interefering with events from map)
+        defaultGraveDetailTop = $(window).height()*0.55;
+        setWrapperHeight(defaultWrapperHeight);
         bindEvents();
         //clickedGravePoint();
         buildMap();
@@ -19,13 +23,20 @@ var Map = (function()
 
     function filterKeyUp()
     {
-        closeGraveDetail();
+        setWrapperHeight($(window).height());
+        if(parseFloat($('#grave_detail').css('top')) < $(window).height()){
+          closeGraveDetail();
+        }
         if($("#scroller").hasClass('hide')){
           $("#scroller").removeClass('hide');
         }
 
         // Retrieve the input field text and reset the count to zero
         var name = $(this).val();
+
+        if(name.length == 0){
+          setWrapperHeight(defaultWrapperHeight);
+        }
 
         // Loop through the comment list
         $(".names li").each(function(){
@@ -134,6 +145,7 @@ var Map = (function()
           Map.on("click", function(evt) {
             console.log('ClickLocation: ' + evt.mapPoint.x+', '+evt.mapPoint.y);
             Map.centerAt(evt.mapPoint);
+            clickedGravePoint();
           })
 
           // The selection function which fetches the GraveID from the FeatureLayer
@@ -158,33 +170,34 @@ var Map = (function()
       });
     }
 
-      function goToGrave(graveId) {
-        var graveX;
-        var graveY;
-        $.ajax({
-          url: mapServerURL + "/0/query?where=grafcode='" + graveId + "'&f=json",
-          async:false
-        })
-          .done(function(data) {
-            var json = $.parseJSON(data);
-            console.log(data);
-            graveX = json.features[0].geometry.x
-            graveY = json.features[0].geometry.y        
-          });
-        console.log(graveX + ', ' + graveY);
-        //Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( {wkid:31370} ) ));
-      }
+    function goToGrave(graveId) {
+      var graveX;
+      var graveY;
+      $.ajax({
+        url: mapServerURL + "/0/query?where=grafcode='" + graveId + "'&f=json",
+        async:false
+      })
+        .done(function(data) {
+          var json = $.parseJSON(data);
+          console.log(data);
+          graveX = json.features[0].geometry.x
+          graveY = json.features[0].geometry.y
+        });
+      console.log(graveX + ', ' + graveY);
+      //Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( {wkid:31370} ) ));
+    }
 
     function clickedGravePoint(e){
+      console.log('[Map.js] clickedGravePoint');
+      setWrapperHeight($(window).height());
       if(e){e.preventDefault();}
         if($("#grave_detail").hasClass('hide')){
           $("#grave_detail").removeClass('hide');
         }
         //load persons
         //TODO:als er geen personen zijn verwijder $('#people')
-        var originalTopMargin = $('#grave_detail').css('top');
         $('#grave_detail').css('top', '100%').animate({
-            top: originalTopMargin
+            top: defaultGraveDetailTop
         }, 600);
     }
 
@@ -192,7 +205,11 @@ var Map = (function()
       if(e){e.preventDefault();}
       $('#grave_detail').animate({
           top: $(window).height()+'px'
-      }, 600);
+      }, 600, function(e){
+        if(!$("#filter").is(":focus")){
+          setWrapperHeight(defaultWrapperHeight);
+        }
+      });
     }
 
     function tappedBackButton(e){
@@ -207,6 +224,11 @@ var Map = (function()
       $('#back_button').on('click', tappedBackButton);
       $('#back_button').on('touchend', tappedBackButton);
       $("#filter").on('keyup', filterKeyUp);
+    }
+
+    //utilities
+    function setWrapperHeight(height){
+      $('#wrapper').css('height', height);
     }
 
     return Map;

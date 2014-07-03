@@ -22,10 +22,12 @@ var home, map;
 
     function backToHomeTransition(e){
       console.log('[app.js] backToHomeTransition');
-      $("#view1").load("templates/home.html");
-      $('#wrapper, #mapdiv').animate({
+      home = new Home();
+      var duration = 500;
+      $('#mapdiv').animate({left:$(window).width()}, duration);
+      $('#wrapper').animate({
         left: 0
-      }, 500, function(e){
+      }, duration, function(e){
         $("#view2").html('');
       });
     }
