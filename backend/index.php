@@ -3,7 +3,7 @@
 ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
-require_once __DIR__.'/../../../vendor/autoload.php';
+require_once __DIR__.'/vendor/autoload.php';
 
 $app = new Silex\Application();
 $app['debug'] = true; //debug output
@@ -73,22 +73,48 @@ $app->get('/getPersonByCodeAtCemetery/{cemetery}/{code}',function($cemetery,$cod
 	return json_encode($return);
 });
 
-//NAME
+//NAME (& year of death)
 //Get a person by name at all cemeteries
 $app->get('/getPersonByName/{name}', function($name) use($locd,$user,$pass,$dbna){
 	//connect
 	$db = new mysqli($locd, $user, $pass, $dbna);
-	//query
-	$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath from DATA
-		where CONCAT (firstName, ' ', familyName) LIKE ?
-		OR CONCAT(familyName , ' ' , firstName) LIKE ?
-	");
-	$name = "%" . $name . "%";
-	$stmt->bind_param('ss', $name, $name);
+	//echo "s: $name</br>";
+	//get name and year
+	if (preg_match('/[0-9]{1,4}/',$name,$year, PREG_OFFSET_CAPTURE )){
+		//echo var_dump($year) . "</br>";
+		//prep query
+		$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath from DATA
+			where ( CONCAT (firstName, ' ', familyName) LIKE ?
+				OR CONCAT(familyName , ' ' , firstName) LIKE ? )
+			AND year(dateOfDeath) LIKE ?
+		");
+		
+		//prep params
+		$name = preg_replace('/\d/','',$name); //remove all digits in name
+		$name = trim($name) . "%";//name starts with 
 
+		$year = "%" . $year[0][0] . "%";//only the first year && contain
+
+		//echo "y: $year </br>n: $name</br>";
+		//bind params
+		$stmt->bind_param('sss', $name, $name, $year); //only 
+	}else{
+		//prep query
+		$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath from DATA
+			where ( CONCAT (firstName, ' ', familyName) LIKE ?
+				OR CONCAT(familyName , ' ' , firstName) LIKE ? )
+		");
+		
+		$name = trim($name) . "%";//name starts with
+
+		//bind params
+		$stmt->bind_param('ss', $name, $name);
+	}
+
+	//execute
 	$stmt->execute();
 
-	//bind & fetch
+	//bind results & fetch
 	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath);
 	$return = array();
 	$i = 0;
@@ -101,7 +127,6 @@ $app->get('/getPersonByName/{name}', function($name) use($locd,$user,$pass,$dbna
 	    	"dateOfDeath" => htmlentities($dateOfDeath)));
 			$i++;
 	}
-	echo json_encode($return);
 	//close connection
 	$stmt->close();
 	//encode
@@ -112,13 +137,40 @@ $app->get('/getPersonByName/{name}', function($name) use($locd,$user,$pass,$dbna
 $app->get('/getPersonByNameAtCemetery/{cemetery}/{name}', function($cemetery,$name) use($locd,$user,$pass,$dbna){
 	//connect
 	$db = new mysqli($locd, $user, $pass, $dbna);
-	//query
-	$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath from DATA
-		where cemetery = ? AND
-			(CONCAT (firstName, ' ', familyName) LIKE ? OR CONCAT(familyName , ' ' , firstName) LIKE ? )
-	");
-	$name = "%" . $name . "%";
-	$stmt->bind_param('sss', $cemetery, $name, $name);
+	//echo "s: $name</br>";
+	//get name and year
+	if (preg_match('/[0-9]{1,4}/',$name,$year, PREG_OFFSET_CAPTURE )){
+		//echo var_dump($year) . "</br>";
+		//prep query
+		$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath from DATA
+			where ( CONCAT (firstName, ' ', familyName) LIKE ?
+				OR CONCAT(familyName , ' ' , firstName) LIKE ? )
+			AND year(dateOfDeath) LIKE ?
+			AND cemetery = ?
+		");
+		
+		//prep params
+		$name = preg_replace('/\d/','',$name); //remove all digits in name
+		$name = trim($name) . "%";//name starts with 
+
+		$year = "%" . $year[0][0] . "%";//only the first year && contain
+
+		//echo "y: $year </br>n: $name</br>";
+		//bind params
+		$stmt->bind_param('ssss', $name, $name, $year, $cemetery); //only 
+	}else{
+		//prep query
+		$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath from DATA
+			where ( CONCAT (firstName, ' ', familyName) LIKE ?
+				OR CONCAT(familyName , ' ' , firstName) LIKE ? )
+			AND cemetery = ?
+		");
+		
+		$name = trim($name) . "%";//name starts with
+
+		//bind params
+		$stmt->bind_param('sss', $name, $name, $cemetery);
+	}
 
 	$stmt->execute();
 
@@ -158,9 +210,6 @@ $app->get('/getCemeteries', function() use($locd,$user,$pass,$dbna){
 	//encode
 	return json_encode($return);
 });
-
-
-
 
 
 $app->run();
