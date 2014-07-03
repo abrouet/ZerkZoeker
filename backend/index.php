@@ -193,7 +193,6 @@ $app->get('/getPersonByNameAtCemetery/{cemetery}/{name}', function($cemetery,$na
 	return json_encode($return);
 });
 
-
 //cemetery
 //Get the distinct cemeteries
 $app->get('/getCemeteries', function() use($locd,$user,$pass,$dbna){
