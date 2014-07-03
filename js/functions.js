@@ -67,8 +67,7 @@ var municipVars = {
 		'graveLayerURL' : '/0',
 		'wkid' : 31370,
 		'extractGraveId' : function(json, callback) {
-			var graveId;
-			graveId = json.attributes.GRAFXYZ;
+			var graveId = json.attributes.GRAFXYZ;
 			callback(graveId);
 		},
 		'extractGraveLoc' : function(json, callback) {
@@ -88,63 +87,63 @@ var municipVars = {
 var cemeteryVars = {
 	'Waregem De Barakke' : {
 		'municipality' : 'WAR',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':-5, 'y':70, 'zoom':3 },
 	},
 	'Sint-Eloois-Vijve' : {
 		'municipality' : 'WAR',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':2010, 'y':80, 'zoom':5 },
 	},
 	'Waregem Den Olm' : {
 		'municipality' : 'WAR',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':4010, 'y':80, 'zoom':6 },
 	},
 	'Beveren-Leie' : {
 		'municipality' : 'WAR',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':5020, 'y':140, 'zoom':6 },
 	},
 	'Desselgem Schoendalestraat' : {
 		'municipality' : 'WAR',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':1087, 'y':0, 'zoom':5 },
 	},
 	'Ooigemstraat' : {
 		'municipality' : 'WAR',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':2910, 'y':-93, 'zoom':6 },
 	},
 	'Outrijve-Bossuit' : {
 		'municipality' : 'AVE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':1540, 'y':121, 'zoom':7 },
 	},
 	'Avelgem' : {
 		'municipality' : 'AVE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':55, 'y':115, 'zoom':3 },
 	},
 	'Waarmaarde' : {
 		'municipality' : 'AVE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':2020, 'y':114, 'zoom':6 },
 	},
 	'Kerkhove' : {
 		'municipality' : 'AVE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':2520, 'y':115, 'zoom':7 },
 	},
 	'Bossuit' : {
 		'municipality' : 'AVE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':1028, 'y':112, 'zoom':7 },
 	},
 	'Waarmaarde-Kerkhove' : {
 		'municipality' : 'AVE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':3024, 'y':118, 'zoom':6 },
 	},
 	'Outrijve' : {
 		'municipality' : 'AVE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':530, 'y':114, 'zoom':6 },
 	},
 	'Deerlijk' : {
 		'municipality' : 'DEE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':2, 'y':59, 'zoom':3 },
 	},
 	'Sint-Lodewijk' : {
 		'municipality' : 'DEE',
-		'location' : [1, 1, 0]
+		'startCoords' : { 'x':508, 'y':62, 'zoom':4 }
 	}
 }
 
@@ -154,6 +153,11 @@ var cemeteryVars = {
  */
 function getMunicipalityInfo(municip, callback) {
 	var data = municipVars[municip];
+	callback(data);
+}
+
+function getLocationInfo(location, callback) {
+	var data = cemeteryVars[location];
 	callback(data);
 }
 

@@ -1,15 +1,26 @@
 var Map = (function()
 {
-    // Parameters to quickly change maps
-    var mapDivId = "mapdiv"; // The id of the div in which to display the map
-    var mapServerURL = "http://www.govmaps.eu/arcgis/rest/services/WAR/WAR_begraafplaats/MapServer"; // The url of the server where the arcgis map is stored
+    // The id of the div in which to display the map
+    var mapDivId = "mapdiv";
 
-    var graveId, defaultGraveDetailTop;
+    var cemetery; // the name of the location
+    var location; // location info (as defined in functions.js)
+    var municip; // Municipality info (as defined in functions.js)
+
+    var defaultGraveDetailTop;
     var defaultWrapperHeight = '112px';
 
     function Map()
     {
       console.log('[Map.js] init');
+
+      // Get all context info about cemetery and municipality
+      cemetery = $.localStorage.get('zz_location');
+      getLocationInfo(cemetery, function(response) {location = response;} );
+      getMunicipalityInfo(location.municipality, function(response) {municip = response;} );
+
+      console.log(municip.mapServerURL);
+
       //load template
       $("#view2").html('').css('left',0).load("templates/map.html", function(){
         //set default height (no interefering with events from map)
@@ -107,14 +118,14 @@ var Map = (function()
 
           // Fetch the graphics layers and add them to the map
           Map = new Map(mapDivId);
-          var layer = new esri.layers.ArcGISTiledMapServiceLayer(mapServerURL);
+          var layer = new esri.layers.ArcGISTiledMapServiceLayer(municip.mapServerURL);
           Map.addLayer(layer);
 
           // Fetch the FeatureLayer which contains the gravepoints
-          var tombLayerURL = mapServerURL + "/0";
+          var tombLayerURL = municip.mapServerURL + municip.graveLayerURL;
           var featureLayer = new FeatureLayer(tombLayerURL);
 
-          Map.centerAndZoom(new Point(5000, 110, new SpatialReference({wkid:31370})), 5);
+          Map.centerAndZoom(new Point(location.startCoords.x, location.startCoords.y, new SpatialReference(municip.wkid)), location.startCoords.zoom);
 
           // Create the circle to display when clicking on the map
           /*var locationMarkerUrl = 'img/icon_map_marker.png';
@@ -153,23 +164,31 @@ var Map = (function()
           * this GraveID is needed to request the personal info about from the database.
           */
           function selectInBuffer(response){
-            var features = response.features;
-            if(features.length > 0) {
-              var objectId = features[0].attributes.OBJECTID;
-              $.ajax({
-                url: mapServerURL + "/0/query?where=OBJECTID=" + objectId + "&outFields=grafcode&f=json",
-                async:false
-              })
-                .done(function(data) {
-                  var json = $.parseJSON(data);
-                  var code = json.features[0].attributes.grafcode;
-                  graveId = code;
-                });
-              // Pass the id to the function which will load the data from the database
-              loadGraveData(graveId);
+            var feature = response.features[0];
+            console.log(feature);
+            // TODO: redirect dynamically to function.js
+            if(location.municipality == 'AVE') {
+              fetchGraveId(feature.attributes.OBJECTID_1);
+            } else {
+              fetchGraveId(feature.attributes.OBJECTID);
             }
           }
       });
+
+      function fetchGraveId(objectId) {
+        console.log(objectId);
+         $.ajax({
+          url: municip.mapServerURL + municip.graveLayerURL + "/query?where=OBJECTID=" + objectId + "&outFields=*&f=json",
+          async:false
+        })
+          .done(function(data) {
+            var json = $.parseJSON(data);
+            if(json.features.length > 0) {
+              getGraveId(location.municipality, json.features[0], function(response){ loadGraveData(response); });
+            }
+          });
+      }
+
     }
 
     function loadGraveData(graveId){
@@ -189,11 +208,11 @@ var Map = (function()
       });
     }
 
-    function goToGrave(graveId) {
+    /*function goToGrave(graveId) {
       var graveX;
       var graveY;
       $.ajax({
-        url: mapServerURL + "/0/query?where=grafcode='" + graveId + "'&f=json",
+        url: municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode='" + graveId + "'&f=json",
         async:false
       })
         .done(function(data) {
@@ -203,8 +222,8 @@ var Map = (function()
           graveY = json.features[0].geometry.y
         });
       console.log(graveX + ', ' + graveY);
-      //Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( {wkid:31370} ) ));
-    }
+      //Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( municip.wkid ) ));
+    }*/
 
     function clickedGravePoint(e){
       setWrapperHeight($(window).height());
