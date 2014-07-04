@@ -161,51 +161,52 @@ var Map = (function()
           });
 
           Map.on('pan', function(evt) {
-            //TODO
+            //TODO: implement to enforce the boundaries of a specific map
           });
 
           /** The selection function which fetches the GraveID from the FeatureLayer,
           * this GraveID is needed to request the personal info about from the database.
           */
           function selectInBuffer(response){
-            var feature = response.features[0];
-            console.log(feature);
-            // TODO: redirect dynamically to function.js; this did not work when tried earlier...
-            if(location.municipality == 'AVE') {
-              fetchGraveId(feature.attributes.OBJECTID_1);
-            } else {
-              fetchGraveId(feature.attributes.OBJECTID);
+            if(response.features.length > 0) {
+              var feature = response.features[0];
+              // TODO: redirect dynamically to function.js; this did not work when tried earlier...
+              if(location.municipality == 'AVE') {
+                fetchGraveId(feature.attributes.OBJECTID_1);
+              } else {
+                fetchGraveId(feature.attributes.OBJECTID);
+              }
             }
           }
 
           function goToGrave(graveId) {
             setTimeout(function(){
-            console.log['[Map.js] goToGrave'];
-            var graveLoc;
-            $.ajax({
-              url:municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode='"+graveId+"'&f=json",
-              async:true,
-              type:'GET',
-              dataType:'json',
-              success:function(response) {
-                console.log(response);
-                if(response.features.length > 0) {
-                  getGraveLocation(location.municipality, response.features[0], function(location) {graveLoc = location;});
-                  var point = new Point(graveLoc.x, graveLoc.y, new SpatialReference(municip.wkid));
-                  Map.centerAndZoom(point, 10);
-                  loadGraveData(graveId);
-                  // Clear the graphics on the map and add the marker
-                  console.log(Map);
-                  console.log(Map.graphics);
-                  Map.graphics.clear();
-                  Map.infoWindow.hide();
-                  var graphic = new Graphic(point, circleSymb);
-                  Map.graphics.add(graphic);
+              console.log['[Map.js] goToGrave'];
+              var graveLoc;
+              $.ajax({
+                url:municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode='"+graveId+"'&f=json",
+                async:true,
+                type:'GET',
+                dataType:'json',
+                success:function(response) {
+                  console.log(response);
+                  if(response.features.length > 0) {
+                    getGraveLocation(location.municipality, response.features[0], function(location) {graveLoc = location;});
+                    var point = new Point(graveLoc.x, graveLoc.y, new SpatialReference(municip.wkid));
+                    Map.centerAndZoom(point, 10);
+                    loadGraveData(graveId);
+                    // Clear the graphics on the map and add the marker
+                    console.log(Map);
+                    console.log(Map.graphics);
+                    Map.graphics.clear();
+                    Map.infoWindow.hide();
+                    var graphic = new Graphic(point, circleSymb);
+                    Map.graphics.add(graphic);
+                  }
                 }
-              }
-            });
-          }, 200);
-        }
+              });
+            }, 200);
+          }
 
           if($.localStorage.isSet('zz_target')) {
             console.log('[Map.js] localStorage("zz_target") = ' + $.localStorage.get('zz_target'));
