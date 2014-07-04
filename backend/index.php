@@ -203,7 +203,7 @@ $app->get('/getPersonByNameAtCemetery/{cemetery}/{name}', function($cemetery,$na
 });
 
 //cemetery
-//Get the distinct cemeteries
+//Get ALL the distinct cemeteries
 $app->get('/getCemeteries', function() use($locd,$user,$pass,$dbna){
 	//connect
 	$db = new mysqli($locd, $user, $pass, $dbna);
@@ -219,6 +219,35 @@ $app->get('/getCemeteries', function() use($locd,$user,$pass,$dbna){
     		"dim4Name" => $row['dim4Name'],
 	    ));
 	}
+
+	//encode
+	return json_encode($return);
+});
+
+//get ONE cemetery
+$app->get('/getCemetery/{cemetery}', function($cemetery) use($locd,$user,$pass,$dbna){
+	//connect
+	$db = new mysqli($locd, $user, $pass, $dbna);
+	//query
+	$stmt = $db->prepare("SELECT distinct(d.cemetery), dim1Name,dim2Name,dim3Name,dim4Name FROM DimensionNames dn 
+		join DATA d on dn.cemetery = d.cemetery 
+		where d.cemetery = ?");
+
+	$stmt->bind_param("s",$cemetery);
+	$stmt->execute();
+
+	$stmt->bind_result($cemetery,$dim1Name,$dim2Name,$dim3Name,$dim4Name);
+	$return = array();
+	while($return = $return->fetch()){
+	    array_push($return,array("cemetery" => $cemetery,
+    		"dim1Name" => $dim1Name,
+    		"dim2Name" => $dim2Name,
+    		"dim3Name" => $dim3Name,
+    		"dim4Name" => $dim4Name,
+	    ));
+	}
+
+	$stmt->close();
 
 	//encode
 	return json_encode($return);
