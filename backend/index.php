@@ -23,18 +23,13 @@ $app->get('/getPersonByCode/{code}',function($code) use($locd,$user,$pass,$dbna)
 	$db = new mysqli($locd, $user, $pass, $dbna);
 	//query
 	//municipality,
-	$stmt = $db->prepare("select id,code,municipality,d.cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath,
-			dim1Name,dim2Name,dim3Name,dim4Name
-		from DATA d
-			join DimensionNames dn on dn.cemetery = d.cemetery
-		where code = ?");
+	$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath
+		from DATA where code = ?");
 	$stmt->bind_param('s',$code);
 	$stmt->execute();
 
 	//bind & fetch
-	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath,
-		$dim1Name,$dim2Name,$dim3Name,$dim4Name
-	);
+	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath);
 	$return = array();
 	while($stmt->fetch()){
 	    array_push($return,array("id" => $id,
@@ -42,8 +37,7 @@ $app->get('/getPersonByCode/{code}',function($code) use($locd,$user,$pass,$dbna)
 	    	"cemetery" => htmlentities($cemetery),"type" => htmlentities($type),
 	    	"firstName" => htmlentities($firstName), "familyName" => htmlentities($familyName),
 	    	"dateOfDeath" => htmlentities($dateOfDeath),
-	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4,
-	    	"dim1Name" => $dim1Name,"dim2Name" => $dim2Name,"dim3Name" => $dim3Name,"dim4Name" => $dim4Name
+	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4
 	    	));
 	}
 
@@ -59,27 +53,21 @@ $app->get('/getPersonByCodeAtCemetery/{cemetery}/{code}',function($cemetery,$cod
 	//connect
 	$db = new mysqli($locd, $user, $pass, $dbna);
 	//query
-	$stmt = $db->prepare("select id,code,municipality,d.cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath,
-			dim1Name,dim2Name,dim3Name,dim4Name
-		from DATA d
-			join DimensionNames dn on dn.cemetery = d.cemetery
-		where code = ? AND d.cemetery = ?");
+	$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath
+		from DATA where code = ? AND cemetery = ?");
 	$stmt->bind_param('ss',$code,$cemetery);
 	$stmt->execute();
 
 	//bind & fetch
-	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath,
-		$dim1Name,$dim2Name,$dim3Name,$dim4Name
-	);
+	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath);
 	$return = array();
 	while($stmt->fetch()){
 	    array_push($return,array("id" => $id,
 	    	"code" => htmlentities($code), "municipality" => htmlentities($municipality),
-	    	"cemetery" => htmlentities($cemetery),"type" => htmlentities($type),
+	    	"cemetery" => htmlentities($cemetery), "type" => htmlentities($type),
 	    	"firstName" => htmlentities($firstName), "familyName" => htmlentities($familyName),
 	    	"dateOfDeath" => htmlentities($dateOfDeath),
-	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4,
-	    	"dim1Name" => $dim1Name,"dim2Name" => $dim2Name,"dim3Name" => $dim3Name,"dim4Name" => $dim4Name
+	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4
 	    	));
 	}
 
@@ -100,10 +88,7 @@ $app->get('/getPersonByName/{name}', function($name) use($locd,$user,$pass,$dbna
 	if (preg_match('/[0-9]{1,4}/',$name,$year, PREG_OFFSET_CAPTURE )){
 		//echo var_dump($year) . "</br>";
 		//prep query
-		$stmt = $db->prepare("select id,code,municipality,d.cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath,
-				dim1Name,dim2Name,dim3Name,dim4Name
-			from DATA d
-				join DimensionNames dn on dn.cemetery = d.cemetery
+		$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath from DATA
 			where ( CONCAT (firstName, ' ', familyName) LIKE ?
 				OR CONCAT(familyName , ' ' , firstName) LIKE ? )
 			AND year(dateOfDeath) LIKE ?
@@ -120,10 +105,7 @@ $app->get('/getPersonByName/{name}', function($name) use($locd,$user,$pass,$dbna
 		$stmt->bind_param('sss', $name, $name, $year); //only 
 	}else{
 		//prep query
-		$stmt = $db->prepare("select id,code,municipality,d.cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath,
-				dim1Name,dim2Name,dim3Name,dim4Name
-			from DATA d
-				join DimensionNames dn on dn.cemetery = d.cemetery
+		$stmt = $db->prepare("select id,code,municipality,cemetery,type,dim1,dim2,dim3,dim4,familyName,firstName,dateOfDeath from DATA
 			where ( CONCAT (firstName, ' ', familyName) LIKE ?
 				OR CONCAT(familyName , ' ' , firstName) LIKE ? )
 		");
@@ -137,23 +119,21 @@ $app->get('/getPersonByName/{name}', function($name) use($locd,$user,$pass,$dbna
 	//execute
 	$stmt->execute();
 
-	//bind & fetch
-	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath,
-		$dim1Name,$dim2Name,$dim3Name,$dim4Name
-	);
-
+	//bind results & fetch
+	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath);
 	$return = array();
+	$i = 0;
 	while($stmt->fetch()){
+		//echo $id . " " . $code . "</br>";
 	    array_push($return,array("id" => $id,
 	    	"code" => htmlentities($code), "municipality" => htmlentities($municipality),
-	    	"cemetery" => htmlentities($cemetery),"type" => htmlentities($type),
+	    	"cemetery" => htmlentities($cemetery), "type" => htmlentities($type),
 	    	"firstName" => htmlentities($firstName), "familyName" => htmlentities($familyName),
 	    	"dateOfDeath" => htmlentities($dateOfDeath),
-	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4,
-	    	"dim1Name" => $dim1Name,"dim2Name" => $dim2Name,"dim3Name" => $dim3Name,"dim4Name" => $dim4Name
+	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4
 	    	));
+			$i++;
 	}
-
 	//close connection
 	$stmt->close();
 	//encode
@@ -202,19 +182,17 @@ $app->get('/getPersonByNameAtCemetery/{cemetery}/{name}', function($cemetery,$na
 	$stmt->execute();
 
 	//bind & fetch
-	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath,
-		$dim1Name,$dim2Name,$dim3Name,$dim4Name
-	);
+	$stmt->bind_result($id,$code,$municipality,$cemetery,$type,$dim1,$dim2,$dim3,$dim4,$familyName,$firstName,$dateOfDeath);
 	$return = array();
 	while($stmt->fetch()){
+		//echo $id . " " . $code . "</br>";
 	    array_push($return,array("id" => $id,
-	    	"code" => htmlentities($code), "municipality" => htmlentities($municipality),
-	    	"cemetery" => htmlentities($cemetery),"type" => htmlentities($type),
+	    	"code" => htmlentities($code), "cemetery" => htmlentities($cemetery),
+	    	"municipality" => htmlentities($municipality), "type" => htmlentities($type),
 	    	"firstName" => htmlentities($firstName), "familyName" => htmlentities($familyName),
 	    	"dateOfDeath" => htmlentities($dateOfDeath),
-	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4,
-	    	"dim1Name" => $dim1Name,"dim2Name" => $dim2Name,"dim3Name" => $dim3Name,"dim4Name" => $dim4Name
-	    	));
+	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4
+    	));
 	}
 
 	//close connection
