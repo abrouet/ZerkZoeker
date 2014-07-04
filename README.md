@@ -15,6 +15,7 @@ This project is part of #oSoc14.
 ### Backend
 -> Uses Silex, composer file included.
 -> Database needed, definitions included in database.sql ; designed and tested for mariadb / mysql.
+-> create config.php file containing location and login of database
 
 ## Copyright
 © OKFN Belgium vzw/asbl
