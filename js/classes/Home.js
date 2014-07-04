@@ -174,6 +174,38 @@ var Home = (function()
             $(this).html(html).addClass("border_radius_bottom");
           }
       });
+      $('.person').unbind().on('click touchend', loadGrave);
+    }
+
+    function loadGrave(e){
+      e.preventDefault();
+      console.log($(e.target).text());
+
+      //storage.set('zz_location',$(this).text());
+      //$(window).trigger("GO_TO_MAP");
+      
+      var url = 'backend/index.php/getPersonByName/' + encodeURIComponent($(e.target).text());
+      console.log(url);
+      $.ajax({
+        dataType: "json",
+        type:'GET',
+        url:url,
+        success: function(pers){
+          console.log(pers[0]['cemetery']);
+
+          //save cemetery in local storage
+          //ns = $.initNamespaceStorage('zz_location');
+          //ns.localStorage;
+          storage = $.localStorage;
+          storage.set('zz_location',pers[0]['cemetery']);
+          $(window).trigger("GO_TO_MAP");
+
+          //zoom to grave
+          //add
+
+        },error: function (xhr, ajaxOptions, thrownError){}
+      });
+
     }
 
     function showMoreResults(e){
