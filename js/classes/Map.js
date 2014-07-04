@@ -189,22 +189,28 @@ var Map = (function()
           }
 
           function goToGrave(graveId) {
+            console.log(graveId);
             var graveLoc;
-            var url = municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode="+graveId+"&f=json";
             $.ajax({
-              url:municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode="+graveId+"&f=json",
+              url:municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode='"+graveId+"'&f=json",
               async:false,
               type:'GET',
               dataType:'json',
               success:function(response) {
+                console.log(response);
                 if(response.features.length > 0) {
                   getGraveLocation(location.municipality, response.features[0], function(location) {graveLoc = location;});
+                  var point = new Point(graveLoc.x, graveLoc.y, new SpatialReference(municip.wkid));
+                  Map.centerAndZoom(point, 10);
+                  loadGraveData(graveId);
+                  // Clear the graphics on the map and add the new circle
+                  Map.graphics.clear();
+                  Map.infoWindow.hide();
+                  var graphic = new Graphic(point, circleSymb);
+                  Map.graphics.add(graphic);
                 }
               }
             });
-            var point = new Point(graveLoc.x, graveLoc.y, new SpatialReference(municip.wkid));
-            map.centerAndZoom(point, 10);
-            loadGraveData(graveId);
           }
 
       });
