@@ -202,12 +202,20 @@ var Map = (function()
         url:url,
         success: function(graveData){
           console.log('[Map.js] ajax success:');
-          console.log(graveData);
+          console.log(graveData[0]);
           clickedGravePoint();
+          fillGraveInfo(graveData);
         },error: function (xhr, ajaxOptions, thrownError){}
       });
     }
 
+    function fillGraveInfo(graveData){
+      $("#dim1 h3").html('1');
+      $("#dim1 h4").html('3');
+      $('#dim2 h4').html("2");
+      $('.death').html("1.1.1920");
+
+    }
     function clickedGravePoint(e){
       setWrapperHeight($(window).height());
       if(e){e.preventDefault();}
