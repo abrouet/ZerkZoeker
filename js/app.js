@@ -14,11 +14,9 @@ var home, map, transitionDuration;
 
       //$.localStorage.set('zz_location', 'Waregem de barakke');
 
-      $.localStorage.set('zz_location', 'WAREGEM DE BARAKKE');
-      $.localStorage.set('zz_target', '156617_0004_0002_0027');
       //Create View
-      map = new Map();
-      //home = new Home();
+      //map = new Map();
+      home = new Home();
 
       //set default position wrapper
       //$("#wrapper").css('left',-$(window).width());

@@ -144,9 +144,9 @@ var Map = (function()
             Map.centerAndZoom(evt.mapPoint, 10);
             // Create the geometric circle in which to search for graves
             circle = new Circle({
-              center: evt.mapPoint,			// Centered on the point of clicking
-              radius: 0.6,							// Radius in which to look for graves
-              radiusUnit: 'esriMeters'	// The unit of the radius, in this case meters
+              center: evt.mapPoint,     // Centered on the point of clicking
+              radius: 0.6,              // Radius in which to look for graves
+              radiusUnit: 'esriMeters'  // The unit of the radius, in this case meters
             });
             // Clear the graphics on the map and add the new circle
             Map.graphics.clear();
