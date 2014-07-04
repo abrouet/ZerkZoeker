@@ -4,15 +4,16 @@ ini_set('display_startup_errors', 1);
 ini_set('display_errors', 1);
 error_reporting(-1);
 require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__.'/config.php';
 
 $app = new Silex\Application();
 $app['debug'] = true; //debug output
 
 //settings
-$locd = "localhost";
-$user = "root"; #FTW :O
-$pass = "root";
-$dbna = "LEIEDAL";
+$locd = $GLOBALS["locd"];
+$user = $GLOBALS["user"]; #FTW :O
+$pass = $GLOBALS["pass"];
+$dbna = $GLOBALS["dbna"];
 
 //Person
 //ID

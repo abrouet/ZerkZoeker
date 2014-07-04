@@ -1,6 +1,10 @@
 //GENERAL UTILITY METHODS
-function testFunction(){
-  console.log('[function.js] testFunction');
+function htmlEncode(value){
+  return $('<div/>').text(value).html();
+}
+
+function htmlDecode(value){
+  return $('<div/>').html(value).text();
 }
 
 function addSpanToFilterResult(filterResult, filter){
@@ -49,7 +53,7 @@ var municipVars = {
 		'mapServerURL' : 'http://www.govmaps.eu/arcgis/rest/services/DEE/DEE_begraafplaatstile/MapServer',
 		'graveLayerURL' : '/2',
 		'wkid' : 31370,
-		'extractGraveId' : function(json, callback) { 
+		'extractGraveId' : function(json, callback) {
 			var graveId;
 			graveId = json.attributes.PERCEEL;
 			callback(graveId);

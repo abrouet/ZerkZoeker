@@ -241,12 +241,9 @@ var Map = (function()
     }
 
     function bindEvents(){;
-      $('#close_detail').on('click', closeGraveDetail);
-      $('#close_detail').on('touchend', closeGraveDetail);
-      $('#back_button').on('click', tappedBackButton);
-      $('#back_button').on('touchend', tappedBackButton);
-      $('#close_map_detail_maplink').on('click', closeGraveDetail);
-      $('#close_map_detail_maplink').on('touchend', closeGraveDetail);
+      $('#close_detail').on('click touchend', closeGraveDetail);
+      $('#back_button').on('click touchend', tappedBackButton);
+      $('#close_map_detail_maplink').on('click touchend', closeGraveDetail);
       $("#view_map #filter").on('keyup', filterKeyUp);
     }
 
