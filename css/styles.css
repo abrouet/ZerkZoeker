@@ -128,13 +128,16 @@ ul{
   margin: 0 auto;
 }
 
+#results li:last-child{
+  margin-bottom: 30px;
+}
+
 #scroller li{
   list-style-type: none;
   font-family: 'helvetica_neue_light';
   margin-top: 2px;
   padding: 13px 0px 13px 15%;
   font-size: 10pt;
-  background-color: #f3f3f3;
   background-repeat: no-repeat;
   height: 38px;
   width: 100%;
@@ -145,6 +148,16 @@ ul{
 
 .location{
   background-image: url('../img/location_marker.png');
+  background-color: #f3f3f3;
+}
+
+.person{
+  background-color: #f3f3f3;
+}
+
+.show_more_results{
+  background-color: #E7E7E7;
+  background-image: url('../img/icon_plus.png');
 }
 
 #names_wrapper .person, #view_home .person{

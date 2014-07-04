@@ -1,12 +1,12 @@
 var Home = (function()
 {
-    var resultsScroller, arrNames, personTemplate, numResultsToShow, moreResultsAvailable;
+    var resultsScroller, arrNames, personTemplate, numResultsToShow, moreResultsAvailable, totalResults, loadedResults;
 
     function Home()
     {
       console.log('[Home.js] init');
       numResultsToShow = 30;
-      moreResultsAvailable = false;
+      loadedResults = 0;
 
       //load template
       $("#view1").html('').css('left',0).load("templates/home.html", function(){
@@ -68,9 +68,7 @@ var Home = (function()
             arrNames = names;
             $.get("templates/person_listitem.html", function(data){
               personTemplate = data;
-              /*if(names.length < numResultsToShow){
-                numResultsToShow = names.length;
-              }*/
+              loadedResults = 0;
               updateNameList(search);
               makeScroll();
             });
@@ -105,45 +103,69 @@ var Home = (function()
     function updateNameList(search){
       $("#view_home .person").remove();
       $("#view_home .show_more_results").remove();
-      moreResultsAvailable = false;
+      createNames(search);
+      if(moreResultsAvailable){
+        var html = personTemplate.replace('name', 'show more results').replace('person','show_more_results border_radius_bottom');
+        $('#results').append(html);
+        $('.show_more_results').on('click touchend', showMoreResults);
+        $('.border_radius_bottom:not(:last-child)').removeClass('border_radius_bottom');
+      }
+    }
+
+    function createNames(search){
       numResultsToShow = 0;
-      for(var j = 0; j < arrNames.length; j++){
+      totalResults = 0;
+      $('.show_more_results').remove();
+      for(var j = 0; j < arrNames.length-loadedResults; j++){
         var firstName = '';
-        if(arrNames[j]['firstName']){
-          firstName = arrNames[j]['firstName'].toLowerCase();
+        var id = loadedResults+j;
+        if(arrNames[id]['firstName']){
+          firstName = arrNames[id]['firstName'].toLowerCase();
         }
         var lastName = '';
-        if(arrNames[j]['familyName']){
-          lastName = arrNames[j]['familyName'].toLowerCase();
+        if(arrNames[id]['familyName']){
+          lastName = arrNames[id]['familyName'].toLowerCase();
         }
         var birthYear = '';
-        if(arrNames[j]['birthDate']){
-          birthYear = arrNames[j]['birthDate'].substring(0, 4);
+        if(arrNames[id]['birthDate']){
+          birthYear = arrNames[id]['birthDate'].substring(0, 4);
         }
         var deathYear = '';
-        if(arrNames[j]['dateOfDeath']){
-          deathYear = arrNames[j]['dateOfDeath'].substring(0, 4);
+        if(arrNames[id]['dateOfDeath']){
+          deathYear = arrNames[id]['dateOfDeath'].substring(0, 4);
         }
-        var regExpCheckString = firstName + '' + '' + lastName + '' + birthYear + '' + deathYear;
+        var regExpCheckString = firstName + ' ' + ' ' + lastName + ' ' + birthYear + ' ' + deathYear;
 
-        if(numResultsToShow < 30 && (regExpCheckString.indexOf(search.toLowerCase()) >= 0)){
-          var name = '';
-          if(arrNames[j]['firstName'] && arrNames[j]['familyName']){
-            name = arrNames[j]['firstName'].toLowerCase()+' '+arrNames[j]['familyName'].toLowerCase();
-          }else if(arrNames[j]['firstName']){
-            name = arrNames[j]['firstName'].toLowerCase();
-          }else if(arrNames[j]['familyName']){
-            name = arrNames[j]['familyName'].toLowerCase();
+        if((regExpCheckString.indexOf(search.toLowerCase()) >= 0)){
+          totalResults++;
+          //console.log('test');
+          if(numResultsToShow < loadedResults+30 && numResultsToShow < totalResults){
+            var name = '';
+            if(arrNames[id]['firstName'] && arrNames[id]['familyName']){
+              name = arrNames[id]['firstName'].toLowerCase()+' '+arrNames[id]['familyName'].toLowerCase();
+            }else if(arrNames[id]['firstName']){
+              name = arrNames[id]['firstName'].toLowerCase();
+            }else if(arrNames[id]['familyName']){
+              name = arrNames[id]['familyName'].toLowerCase();
+            }
+            if(name.length > 0){
+              var html = personTemplate.replace('name', name);
+              if($('.person').length == 0){
+                $('#results').prepend(html);
+              }else{
+                $('.person').last().after(html);
+              }
+              numResultsToShow++;
+              totalResults = numResultsToShow;
+            }
           }
-          if(name.length > 0){
-            var html = personTemplate.replace('name', name);
-            $('#results').prepend(html);
-          }
-          numResultsToShow++;
         }
-        if(numResultsToShow == 30){
-          moreResultsAvailable = true;
-        }
+      }
+      loadedResults = $('.person').length;
+      if(loadedResults < totalResults){
+        moreResultsAvailable = true;
+      }else{
+        moreResultsAvailable = false;
       }
       $("#view_home .person").each(function(index, value) {
           if ($(this).text().search(new RegExp(search, "i")) >= 0) {
@@ -152,14 +174,18 @@ var Home = (function()
             $(this).html(html).addClass("border_radius_bottom");
           }
       });
-      /*if(moreResultsAvailable){
-        var html = personTemplate.replace('name', 'show more results').replace('person','show_more_results');
-        $('#results').append(html);
-      }*/
+    }
+
+    function showMoreResults(e){
+        e.preventDefault();
+        createNames($("#view_home #filter").val());
+        makeScroll();
+        console.log($(this).position().top);
+        resultsScroller.scrollTo(0, -$(this).offset().top);
     }
 
     function makeScroll(){
-      var visibleElements = 0;
+      /*var visibleElements = 0;
       $('#results li').each(function(index, value) {
           if($(this).is(":visible")){
             visibleElements++;
@@ -168,7 +194,7 @@ var Home = (function()
       console.log('visible elements: '+visibleElements);
       $('#view_home #scroller, #view_home #results').css('height',
       ((parseFloat($('#results .location:last-child').css('height'))+parseFloat($('.location').css('margin-top')))
-      *visibleElements+20)+'px');
+      *visibleElements+20)+'px');*/
       resultsScroller = new IScroll('#view_home #wrapper');
     }
 
