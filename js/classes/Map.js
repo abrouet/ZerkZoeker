@@ -1,4 +1,4 @@
-var Map = (function()
+var Map = (function(graveId)
 {
     var mapDivId = 'mapdiv'; // The id of the div in which to display the map
 
@@ -198,7 +198,7 @@ var Map = (function()
               dataType:'json',
               success:function(response) {
                 console.log(response);
-                if(response.features.length > 0) {
+                //if(response.features.length > 0) {
                   getGraveLocation(location.municipality, response.features[0], function(location) {graveLoc = location;});
                   var point = new Point(graveLoc.x, graveLoc.y, new SpatialReference(municip.wkid));
                   Map.centerAndZoom(point, 10);
@@ -208,7 +208,7 @@ var Map = (function()
                   Map.infoWindow.hide();
                   var graphic = new Graphic(point, circleSymb);
                   Map.graphics.add(graphic);
-                }
+                //}
               }
             });
           }
