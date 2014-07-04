@@ -117,7 +117,7 @@ var Map = (function()
                     Color) {
 
           // Fetch the graphics layers and add them to the map
-          Map.destroy();
+          //Map.destroy();
           Map = new Map(mapDivId);
           var layer = new esri.layers.ArcGISTiledMapServiceLayer(municip.mapServerURL);
           Map.addLayer(layer);
