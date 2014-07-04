@@ -16,7 +16,6 @@ var Map = (function()
 
       // Get all context info about cemetery and municipality
       cemetery = $.localStorage.get('zz_location');
-      console.log(cemetery);
       getLocationInfo(cemetery, function(response) {location = response;} );
       getMunicipalityInfo(location.municipality, function(response) {municip = response;} );
 
@@ -118,6 +117,7 @@ var Map = (function()
                     Color) {
 
           // Fetch the graphics layers and add them to the map
+          Map.destroy();
           Map = new Map(mapDivId);
           var layer = new esri.layers.ArcGISTiledMapServiceLayer(municip.mapServerURL);
           Map.addLayer(layer);
