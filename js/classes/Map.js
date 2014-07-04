@@ -16,6 +16,7 @@ var Map = (function()
 
       // Get all context info about cemetery and municipality
       cemetery = $.localStorage.get('zz_location');
+      console.log(cemetery);
       getLocationInfo(cemetery, function(response) {location = response;} );
       getMunicipalityInfo(location.municipality, function(response) {municip = response;} );
 
@@ -34,7 +35,6 @@ var Map = (function()
         bindEvents();
         //clickedGravePoint();
         buildMap();
-        goToGrave('XA1131096B');
       });
     }
 

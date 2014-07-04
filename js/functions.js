@@ -89,63 +89,63 @@ var municipVars = {
  *
  */
 var cemeteryVars = {
-	'Waregem De Barakke' : {
+	'waregem de barakke' : {
 		'municipality' : 'WAR',
 		'startCoords' : { 'x':-5, 'y':70, 'zoom':3 },
 	},
-	'Sint-Eloois-Vijve' : {
+	'sint-eloois-vijve' : {
 		'municipality' : 'WAR',
 		'startCoords' : { 'x':2010, 'y':80, 'zoom':5 },
 	},
-	'Waregem Den Olm' : {
+	'waregem den olm' : {
 		'municipality' : 'WAR',
 		'startCoords' : { 'x':4010, 'y':80, 'zoom':6 },
 	},
-	'Beveren-Leie' : {
+	'beveren-leie' : {
 		'municipality' : 'WAR',
 		'startCoords' : { 'x':5020, 'y':140, 'zoom':6 },
 	},
-	'Desselgem Schoendalestraat' : {
+	'desselgem schoendalestraat' : {
 		'municipality' : 'WAR',
 		'startCoords' : { 'x':1087, 'y':0, 'zoom':5 },
 	},
-	'Ooigemstraat' : {
+	'ooigemstraat' : {
 		'municipality' : 'WAR',
 		'startCoords' : { 'x':2910, 'y':-93, 'zoom':6 },
 	},
-	'Outrijve-Bossuit' : {
+	'outrijve-bossuit' : {
 		'municipality' : 'AVE',
 		'startCoords' : { 'x':1540, 'y':121, 'zoom':7 },
 	},
-	'Avelgem' : {
+	'avelgem' : {
 		'municipality' : 'AVE',
 		'startCoords' : { 'x':55, 'y':115, 'zoom':3 },
 	},
-	'Waarmaarde' : {
+	'waarmaarde' : {
 		'municipality' : 'AVE',
 		'startCoords' : { 'x':2020, 'y':114, 'zoom':6 },
 	},
-	'Kerkhove' : {
+	'kerkhove' : {
 		'municipality' : 'AVE',
 		'startCoords' : { 'x':2520, 'y':115, 'zoom':7 },
 	},
-	'Bossuit' : {
+	'bossuit' : {
 		'municipality' : 'AVE',
 		'startCoords' : { 'x':1028, 'y':112, 'zoom':7 },
 	},
-	'Waarmaarde-Kerkhove' : {
+	'waarmaarde-kerkhove' : {
 		'municipality' : 'AVE',
 		'startCoords' : { 'x':3024, 'y':118, 'zoom':6 },
 	},
-	'Outrijve' : {
+	'outrijve' : {
 		'municipality' : 'AVE',
 		'startCoords' : { 'x':530, 'y':114, 'zoom':6 },
 	},
-	'Deerlijk' : {
+	'deerlijk' : {
 		'municipality' : 'DEE',
 		'startCoords' : { 'x':2, 'y':59, 'zoom':3 },
 	},
-	'Sint-Lodewijk' : {
+	'sint-lodewijk' : {
 		'municipality' : 'DEE',
 		'startCoords' : { 'x':508, 'y':62, 'zoom':4 }
 	}
@@ -161,7 +161,7 @@ function getMunicipalityInfo(municip, callback) {
 }
 
 function getLocationInfo(location, callback) {
-	var data = cemeteryVars[location];
+	var data = cemeteryVars[location.toLowerCase()];
 	callback(data);
 }
 
