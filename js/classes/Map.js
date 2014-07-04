@@ -34,6 +34,7 @@ var Map = (function()
         bindEvents();
         //clickedGravePoint();
         buildMap();
+        goToGrave('XA1131096B');
       });
     }
 
@@ -73,7 +74,7 @@ var Map = (function()
         }
     }
 
-    function buildMap(e){
+    function buildMap(e) {
       console.log('[Map.js] buildMap');
       require([
         // Required to build the map and fetch the layer with graves
@@ -166,7 +167,7 @@ var Map = (function()
           function selectInBuffer(response){
             var feature = response.features[0];
             console.log(feature);
-            // TODO: redirect dynamically to function.js
+            // TODO: redirect dynamically to function.js; this did not work when tried earlier...
             if(location.municipality == 'AVE') {
               fetchGraveId(feature.attributes.OBJECTID_1);
             } else {
@@ -207,23 +208,6 @@ var Map = (function()
         },error: function (xhr, ajaxOptions, thrownError){}
       });
     }
-
-    /*function goToGrave(graveId) {
-      var graveX;
-      var graveY;
-      $.ajax({
-        url: municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode='" + graveId + "'&f=json",
-        async:false
-      })
-        .done(function(data) {
-          var json = $.parseJSON(data);
-          console.log(data);
-          graveX = json.features[0].geometry.x
-          graveY = json.features[0].geometry.y
-        });
-      console.log(graveX + ', ' + graveY);
-      //Map.centerAt(new esri.Point(graveX, graveY, new esri.SpatialReference( municip.wkid ) ));
-    }*/
 
     function clickedGravePoint(e){
       setWrapperHeight($(window).height());
