@@ -238,7 +238,7 @@ $app->get('/getCemetery/{cemetery}', function($cemetery) use($locd,$user,$pass,$
 
 	$stmt->bind_result($cemetery,$dim1Name,$dim2Name,$dim3Name,$dim4Name);
 	$return = array();
-	while($return = $return->fetch()){
+	while($stmt->fetch()){
 	    array_push($return,array("cemetery" => $cemetery,
     		"dim1Name" => $dim1Name,
     		"dim2Name" => $dim2Name,
