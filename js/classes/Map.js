@@ -1,6 +1,8 @@
 var Map = (function()
 {
-    var mapDivId = "mapdiv"; // The id of the div in which to display the map
+    var mapDivId = 'mapdiv'; // The id of the div in which to display the map
+
+    var Map;
 
     var cemetery; // the name of the location
     var location; // location info (as defined in functions.js)
@@ -18,10 +20,8 @@ var Map = (function()
       getLocationInfo(cemetery, function(response) {location = response;} );
       getMunicipalityInfo(location.municipality, function(response) {municip = response;} );
 
-      console.log(municip.mapServerURL);
-
       //load template
-      $("#view2").html('').css('left',0).load("templates/map.html", function(){
+      $('#view2').html('').css('left',0).load('templates/map.html', function(){
         //set default height (no interefering with events from map)
         defaultGraveDetailTop = $(window).height()*0.55;
         setWrapperHeight(defaultWrapperHeight);
@@ -42,8 +42,8 @@ var Map = (function()
         if(parseFloat($('#grave_detail').css('top')) < $(window).height()){
           closeGraveDetail();
         }
-        if($("#names_wrapper").hasClass('hide')){
-          $("#names_wrapper").removeClass('hide');
+        if($('#names_wrapper').hasClass('hide')){
+          $('#names_wrapper').removeClass('hide');
         }
 
         // Retrieve the input field text and reset the count to zero
@@ -51,22 +51,22 @@ var Map = (function()
 
         if(name.length == 0){
           setWrapperHeight(defaultWrapperHeight);
-          $("#names_wrapper").addClass('hide');
+          $('#names_wrapper').addClass('hide');
         }
 
         // Loop through the comment list
-        $(".names li").each(function(){
-            if ($(this).text().search(new RegExp(name, "i")) < 0) {
+        $('.names li').each(function(){
+            if ($(this).text().search(new RegExp(name, 'i')) < 0) {
                 $(this).hide();
             } else {
                 var html = addSpanToFilterResult($(this), name);
-                $(".names .border_radius_bottom").removeClass('border_radius_bottom');
-                $(this).html(html).show().addClass("border_radius_bottom");
+                $('.names .border_radius_bottom').removeClass('border_radius_bottom');
+                $(this).html(html).show().addClass('border_radius_bottom');
             }
         });
 
         if(name == 0){
-            $(".names li").each(function(){
+            $('.names li').each(function(){
                 $(this).hide();
             });
         }
@@ -140,13 +140,13 @@ var Map = (function()
           var circle;// Zooms and centers the map when clicking on it
 
           // The function to execute when clicking on the map
-          Map.on("click", function(evt){
+          Map.on('click', function(evt){
             Map.centerAndZoom(evt.mapPoint, 10);
             // Create the geometric circle in which to search for graves
             circle = new Circle({
               center: evt.mapPoint,			// Centered on the point of clicking
               radius: 0.85,							// Radius in which to look for graves
-              radiusUnit: "esriMeters"	// The unit of the radius, in this case meters
+              radiusUnit: 'esriMeters'	// The unit of the radius, in this case meters
             });
             // Clear the graphics on the map and add the new circle
             Map.graphics.clear();
@@ -158,6 +158,20 @@ var Map = (function()
             var query = new Query();
             query.geometry = circle.getExtent();
             featureLayer.queryFeatures(query, selectInBuffer);
+          });
+
+          Map.personSelected = function(evt) {
+            console.log('[Map.js] Event: personSelected');
+            goToGrave(evt.graveId);
+          }
+
+          $(window).on('personSelected', function(evt) {
+            console.log('[Map.js] Event: personSelected');
+            goToGrave(evt.graveId);
+          });
+
+          Map.on('pan', function(evt) {
+
           });
 
           /** The selection function which fetches the GraveID from the FeatureLayer,
@@ -173,6 +187,26 @@ var Map = (function()
               fetchGraveId(feature.attributes.OBJECTID);
             }
           }
+
+          function goToGrave(graveId) {
+            var graveLoc;
+            var url = municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode="+graveId+"&f=json";
+            $.ajax({
+              url:municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode="+graveId+"&f=json",
+              async:false,
+              type:'GET',
+              dataType:'json',
+              success:function(response) {
+                if(response.features.length > 0) {
+                  getGraveLocation(location.municipality, response.features[0], function(location) {graveLoc = location;});
+                }
+              }
+            });
+            var point = new Point(graveLoc.x, graveLoc.y, new SpatialReference(municip.wkid));
+            map.centerAndZoom(point, 10);
+            loadGraveData(graveId);
+          }
+
       });
 
       function fetchGraveId(objectId) {
@@ -197,7 +231,7 @@ var Map = (function()
       storage = $.localStorage;
       var url = 'backend/index.php/getPersonByCodeAtCemetery/'+storage.get('zz_location')+'/'+graveId;
       $.ajax({
-        dataType: "json",
+        dataType: 'json',
         type:'GET',
         url:url,
         success: function(graveData){
@@ -220,8 +254,8 @@ var Map = (function()
       setWrapperHeight($(window).height());
       if(e){e.preventDefault();}
       $('#close_map_detail_maplink').show();
-      if($("#grave_detail").hasClass('hide')){
-        $("#grave_detail").removeClass('hide');
+      if($('#grave_detail').hasClass('hide')){
+        $('#grave_detail').removeClass('hide');
       }
       //load persons
       //TODO:als er geen personen zijn verwijder $('#people')
@@ -236,7 +270,7 @@ var Map = (function()
       $('#grave_detail').animate({
           top: $(window).height()+'px'
       }, 600, function(e){
-        if(!$("#filter").is(":focus")){
+        if(!$('#filter').is(':focus')){
           setWrapperHeight(defaultWrapperHeight);
         }
       });
@@ -244,14 +278,14 @@ var Map = (function()
 
     function tappedBackButton(e){
       if(e){e.preventDefault();}
-      $(window).trigger("BACK_TO_HOME");
+      $(window).trigger('BACK_TO_HOME');
     }
 
     function bindEvents(){;
       $('#close_detail').on('click touchend', closeGraveDetail);
       $('#back_button').on('click touchend', tappedBackButton);
       $('#close_map_detail_maplink').on('click touchend', closeGraveDetail);
-      $("#view_map #filter").on('keyup', filterKeyUp);
+      $('#view_map #filter').on('keyup', filterKeyUp);
     }
 
     //utilities
