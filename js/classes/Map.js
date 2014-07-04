@@ -120,6 +120,7 @@ var Map = (function()
 
           // Fetch the graphics layers and add them to the map
           Map = new Map(mapDivId);
+          //Map.removeAllLayers();
           var layer = new esri.layers.ArcGISTiledMapServiceLayer(municip.mapServerURL);
           Map.addLayer(layer);
 
