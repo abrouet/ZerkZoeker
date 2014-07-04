@@ -12,7 +12,7 @@ var home, map, transitionDuration;
       document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
       transitionDuration = 500;
 
-      $.localStorage.set('zz_location', 'Waregem de barakke');
+      //$.localStorage.set('zz_location', 'Waregem de barakke');
 
       //Create View
       //map = new Map();
@@ -42,9 +42,6 @@ var home, map, transitionDuration;
 
     function goToHomeTransition(e){
       map = new Map();
-      if(e.graveId != null) {
-        $(window).trigger({type:'personSelected', graveId:graveId});
-      }
       $('#mapdiv').animate({left:0}, transitionDuration);
       $('#wrapper').animate({
         left: -$(window).width()

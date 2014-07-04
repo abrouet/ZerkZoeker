@@ -160,15 +160,11 @@ var Map = (function(graveId)
             featureLayer.queryFeatures(query, selectInBuffer);
           });
 
-          Map.personSelected = function(evt) {
+          
+          /*$(window).on('personSelected', function(evt) {
             console.log('[Map.js] Event: personSelected');
             goToGrave(evt.graveId);
-          }
-
-          $(window).on('personSelected', function(evt) {
-            console.log('[Map.js] Event: personSelected');
-            goToGrave(evt.graveId);
-          });
+          });*/
 
           Map.on('pan', function(evt) {
 
@@ -189,7 +185,7 @@ var Map = (function(graveId)
           }
 
           function goToGrave(graveId) {
-            console.log(graveId);
+            console.log['[Map.js] goToGrave'];
             var graveLoc;
             $.ajax({
               url:municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode='"+graveId+"'&f=json",
@@ -213,6 +209,12 @@ var Map = (function(graveId)
             });
           }
 
+          if($.localStorage.isSet('zz_target')) {
+            console.log('[Map.js] localStorage("zz_target") = ' + $localStorage.get('zz_target'));
+            goToGrave($.localStorage.get('zz_target"'));
+            $.localStorage.remove('zz_target');
+          }
+
       });
 
       function fetchGraveId(objectId) {
@@ -232,7 +234,6 @@ var Map = (function(graveId)
     }
 
     function loadGraveData(graveId){
-      console.log('[Map.js] loadGraveData with id: '+graveId);
       ///getPersonByNameAtCemetery/
       storage = $.localStorage;
       var url = 'backend/index.php/getPersonByCodeAtCemetery/'+storage.get('zz_location')+'/'+graveId;
@@ -241,8 +242,6 @@ var Map = (function(graveId)
         type:'GET',
         url:url,
         success: function(graveData){
-          console.log('[Map.js] ajax success:');
-          console.log(graveData[0]);
           clickedGravePoint();
           fillGraveInfo(graveData);
         },error: function (xhr, ajaxOptions, thrownError){}

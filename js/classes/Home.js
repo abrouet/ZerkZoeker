@@ -198,10 +198,9 @@ var Home = (function()
           //ns.localStorage;
           storage = $.localStorage;
           storage.set('zz_location',pers[0]['cemetery']);
-          $(window).trigger({type:"GO_TO_MAP", person:pers[0].graveId});
+          storage.set('zz_target', pers[0]['code']);
 
-          // Zoom to grave
-          //$(window).trigger({type:'personSelected', graveId:pers[0]['code']});
+          $(window).trigger("GO_TO_MAP");
 
         },error: function (xhr, ajaxOptions, thrownError){}
       });
