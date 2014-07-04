@@ -1,7 +1,6 @@
 var Map = (function()
 {
-    // The id of the div in which to display the map
-    var mapDivId = "mapdiv";
+    var mapDivId = "mapdiv"; // The id of the div in which to display the map
 
     var cemetery; // the name of the location
     var location; // location info (as defined in functions.js)
@@ -116,8 +115,10 @@ var Map = (function()
                     esriConfig,
                     Color) {
 
+          // Empty out the div to make sure the new map will fit in
+          $('#' + mapDivId).empty();
+
           // Fetch the graphics layers and add them to the map
-          Map.destroy();
           Map = new Map(mapDivId);
           var layer = new esri.layers.ArcGISTiledMapServiceLayer(municip.mapServerURL);
           Map.addLayer(layer);
@@ -129,9 +130,6 @@ var Map = (function()
           Map.centerAndZoom(new Point(location.startCoords.x, location.startCoords.y, new SpatialReference(municip.wkid)), location.startCoords.zoom);
 
           // Create the circle to display when clicking on the map
-          /*var locationMarkerUrl = 'img/icon_map_marker.png';
-          var sls = new SimpleLineSymbol(SimpleFillSymbol.STYLE_NULL, new Color([255, 0, 0]), 2);
-          var circleSymb = new PictureFillSymbol(locationMarkerUrl,sls,35,35);*/
 
           var locationMarkerUrl = 'img/icon_map_marker.png';
           var circleSymb = new PictureMarkerSymbol(locationMarkerUrl,35,35);
