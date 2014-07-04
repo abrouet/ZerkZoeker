@@ -11,9 +11,9 @@ $app['debug'] = true; //debug output
 
 //settings
 $locd = $GLOBALS["locd"];
-$user = $GLOBALS["root"]; #FTW :O
-$pass = $GLOBALS["root"];
-$dbna = $GLOBALS["LEIEDAL"];
+$user = $GLOBALS["user"]; #FTW :O
+$pass = $GLOBALS["pass"];
+$dbna = $GLOBALS["dbna"];
 
 //Person
 //ID
