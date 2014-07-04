@@ -200,8 +200,8 @@ var Home = (function()
           storage.set('zz_location',pers[0]['cemetery']);
           $(window).trigger("GO_TO_MAP");
 
-          //zoom to grave
-          //add
+          // Zoom to grave
+          $(window).trigger({type:'personSelected', graveId:pers[0]['code']});
 
         },error: function (xhr, ajaxOptions, thrownError){}
       });
