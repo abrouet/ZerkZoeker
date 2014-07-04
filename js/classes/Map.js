@@ -1,4 +1,4 @@
-var Map = (function(graveId)
+var Map = (function()
 {
     var mapDivId = 'mapdiv'; // The id of the div in which to display the map
 
@@ -145,7 +145,7 @@ var Map = (function(graveId)
             // Create the geometric circle in which to search for graves
             circle = new Circle({
               center: evt.mapPoint,			// Centered on the point of clicking
-              radius: 0.85,							// Radius in which to look for graves
+              radius: 0.6,							// Radius in which to look for graves
               radiusUnit: 'esriMeters'	// The unit of the radius, in this case meters
             });
             // Clear the graphics on the map and add the new circle
@@ -160,14 +160,8 @@ var Map = (function(graveId)
             featureLayer.queryFeatures(query, selectInBuffer);
           });
 
-          
-          /*$(window).on('personSelected', function(evt) {
-            console.log('[Map.js] Event: personSelected');
-            goToGrave(evt.graveId);
-          });*/
-
           Map.on('pan', function(evt) {
-
+            //TODO
           });
 
           /** The selection function which fetches the GraveID from the FeatureLayer,
@@ -185,33 +179,37 @@ var Map = (function(graveId)
           }
 
           function goToGrave(graveId) {
+            setTimeout(function(){
             console.log['[Map.js] goToGrave'];
             var graveLoc;
             $.ajax({
               url:municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode='"+graveId+"'&f=json",
-              async:false,
+              async:true,
               type:'GET',
               dataType:'json',
               success:function(response) {
                 console.log(response);
-                //if(response.features.length > 0) {
+                if(response.features.length > 0) {
                   getGraveLocation(location.municipality, response.features[0], function(location) {graveLoc = location;});
                   var point = new Point(graveLoc.x, graveLoc.y, new SpatialReference(municip.wkid));
                   Map.centerAndZoom(point, 10);
                   loadGraveData(graveId);
-                  // Clear the graphics on the map and add the new circle
+                  // Clear the graphics on the map and add the marker
+                  console.log(Map);
+                  console.log(Map.graphics);
                   Map.graphics.clear();
                   Map.infoWindow.hide();
                   var graphic = new Graphic(point, circleSymb);
                   Map.graphics.add(graphic);
-                //}
+                }
               }
             });
-          }
+          }, 200);
+        }
 
           if($.localStorage.isSet('zz_target')) {
-            console.log('[Map.js] localStorage("zz_target") = ' + $localStorage.get('zz_target'));
-            goToGrave($.localStorage.get('zz_target"'));
+            console.log('[Map.js] localStorage("zz_target") = ' + $.localStorage.get('zz_target'));
+            goToGrave($.localStorage.get('zz_target'));
             $.localStorage.remove('zz_target');
           }
 
