@@ -21,8 +21,8 @@ var Home = (function()
             $('#scroller').append('<ul id="results"></ul>');
             $.get("templates/location.html", function(data){
               for(var i = 0; i < cemeteries.length; i++){
-                  var html = data.replace('place', cemeteries[i]);
-                  if(cemeteries[i].length > 0){
+                  var html = data.replace('place', cemeteries[i]['cemetery']);
+                  if(cemeteries[i]['cemetery'].length > 0){
                     $('#results').append(html);
                     $('#results .location:last-child').on('click', tappedLocation).on('touchend', tappedLocation).css('opacity', 0).delay(i*25).animate({
                       opacity: 1

@@ -36,7 +36,9 @@ $app->get('/getPersonByCode/{code}',function($code) use($locd,$user,$pass,$dbna)
 	    	"code" => htmlentities($code), "municipality" => htmlentities($municipality),
 	    	"cemetery" => htmlentities($cemetery),"type" => htmlentities($type),
 	    	"firstName" => htmlentities($firstName), "familyName" => htmlentities($familyName),
-	    	"dateOfDeath" => htmlentities($dateOfDeath)));
+	    	"dateOfDeath" => htmlentities($dateOfDeath),
+	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4
+	    	));
 	}
 
 	//close connection
@@ -64,7 +66,9 @@ $app->get('/getPersonByCodeAtCemetery/{cemetery}/{code}',function($cemetery,$cod
 	    	"code" => htmlentities($code), "municipality" => htmlentities($municipality),
 	    	"cemetery" => htmlentities($cemetery), "type" => htmlentities($type),
 	    	"firstName" => htmlentities($firstName), "familyName" => htmlentities($familyName),
-	    	"dateOfDeath" => htmlentities($dateOfDeath)));
+	    	"dateOfDeath" => htmlentities($dateOfDeath),
+	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4
+	    	));
 	}
 
 	//close connection
@@ -125,7 +129,9 @@ $app->get('/getPersonByName/{name}', function($name) use($locd,$user,$pass,$dbna
 	    	"code" => htmlentities($code), "municipality" => htmlentities($municipality),
 	    	"cemetery" => htmlentities($cemetery), "type" => htmlentities($type),
 	    	"firstName" => htmlentities($firstName), "familyName" => htmlentities($familyName),
-	    	"dateOfDeath" => htmlentities($dateOfDeath)));
+	    	"dateOfDeath" => htmlentities($dateOfDeath),
+	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4
+	    	));
 			$i++;
 	}
 	//close connection
@@ -184,7 +190,9 @@ $app->get('/getPersonByNameAtCemetery/{cemetery}/{name}', function($cemetery,$na
 	    	"code" => htmlentities($code), "cemetery" => htmlentities($cemetery),
 	    	"municipality" => htmlentities($municipality), "type" => htmlentities($type),
 	    	"firstName" => htmlentities($firstName), "familyName" => htmlentities($familyName),
-	    	"dateOfDeath" => htmlentities($dateOfDeath)));
+	    	"dateOfDeath" => htmlentities($dateOfDeath),
+	    	"dim1" => $dim1, "dim2" => $dim2, "dim3" => $dim3, "dim4" => $dim4
+    	));
 	}
 
 	//close connection
@@ -200,11 +208,16 @@ $app->get('/getCemeteries', function() use($locd,$user,$pass,$dbna){
 	//connect
 	$db = new mysqli($locd, $user, $pass, $dbna);
 	//query
-	$res = $db->query("select distinct cemetery from DATA");
+	$res = $db->query("SELECT distinct(d.cemetery), dim1Name,dim2Name,dim3Name,dim4Name FROM DimensionNames dn join DATA d on dn.cemetery = d.cemetery");
 
 	$return = array();
 	while($row = $res->fetch_assoc()){
-	    array_push($return,$row['cemetery']);
+	    array_push($return,array("cemetery" => $row['cemetery'],
+    		"dim1Name" => $row['dim1Name'],
+    		"dim2Name" => $row['dim2Name'],
+    		"dim3Name" => $row['dim3Name'],
+    		"dim4Name" => $row['dim4Name'],
+	    ));
 	}
 
 	//encode
