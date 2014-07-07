@@ -33,7 +33,7 @@ var Home = (function()
                   }
               }
               $('#view_home #wrapper').css('height', $(window).height()-$('#form').offset().top-$('form').height());
-              makeScroll();
+              resultsScroller = makeScroll('#view_home #wrapper');
               bindEvents();
             });
           },error: function (xhr, ajaxOptions, thrownError){}
@@ -70,7 +70,7 @@ var Home = (function()
               personTemplate = data;
               loadedResults = 0;
               updateNameList(search);
-              makeScroll();
+              resultsScroller = makeScroll('#view_home #wrapper');
             });
           },error: function (xhr, ajaxOptions, thrownError){}
         });
@@ -78,13 +78,13 @@ var Home = (function()
         //update cities
         updateCityList(search);
         updateNameList(search);
-        makeScroll();
+        resultsScroller = makeScroll('#view_home #wrapper');
       }else{
         $("#view_home .location").each(function(index, value) {
           $(this).html($(this).html().replace('<span>','').replace('</span>','')).show();
         });
         $("#view_home .person").remove();
-        makeScroll();
+        resultsScroller = makeScroll('#view_home #wrapper');
       }
     }
 
@@ -183,7 +183,7 @@ var Home = (function()
 
       //storage.set('zz_location',$(this).text());
       //$(window).trigger("GO_TO_MAP");
-      
+
       var url = 'backend/index.php/getPersonByName/' + encodeURIComponent($(e.target).text());
       console.log(url);
       $.ajax({
@@ -210,23 +210,9 @@ var Home = (function()
     function showMoreResults(e){
         e.preventDefault();
         createNames($("#view_home #filter").val());
-        makeScroll();
+        resultsScroller = makeScroll('#view_home #wrapper');
         console.log($(this).position().top);
         resultsScroller.scrollTo(0, -$(this).offset().top);
-    }
-
-    function makeScroll(){
-      /*var visibleElements = 0;
-      $('#results li').each(function(index, value) {
-          if($(this).is(":visible")){
-            visibleElements++;
-          }
-      });
-      console.log('visible elements: '+visibleElements);
-      $('#view_home #scroller, #view_home #results').css('height',
-      ((parseFloat($('#results .location:last-child').css('height'))+parseFloat($('.location').css('margin-top')))
-      *visibleElements+20)+'px');*/
-      resultsScroller = new IScroll('#view_home #wrapper');
     }
 
     function bindEvents(){

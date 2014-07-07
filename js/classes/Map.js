@@ -1,6 +1,8 @@
 var Map = (function()
 {
     var mapDivId = 'mapdiv'; // The id of the div in which to display the map
+    
+    var graveDetailTemplate, personTemplate;
 
     var cemetery; // the name of the location
     var location; // location info (as defined in functions.js)
@@ -18,7 +20,7 @@ var Map = (function()
       getLocationInfo(cemetery, function(response) {location = response;} ); // call to functions.js which returns a JSON object with all location info
       getMunicipalityInfo(location.municipality, function(response) {municip = response;} ); // call to functions.js which returns a JSON object with all municipality info
 
-      //load template
+      //load templates
       $('#view2').html('').css('left',0).load('templates/map.html', function(){
         //set default height (no interefering with events from map)
         defaultGraveDetailTop = $(window).height()*0.55;
@@ -31,6 +33,12 @@ var Map = (function()
         bindEvents();
         //clickedGravePoint();
         buildMap();
+      });
+      $.get("templates/grave_detail.html", function(html){
+          graveDetailTemplate = html;
+      });
+      $.get("templates/person.html", function(html){
+          personTemplate = html;
       });
     }
 
@@ -257,31 +265,86 @@ var Map = (function()
         type:'GET',
         url:url,
         success: function(graveData){
-          clickedGravePoint();
-          fillGraveInfo(graveData);
+          console.log('[Map.js] ajax success: grave data received.');
+          console.log(graveData);
+          if(graveData.length > 0){
+            clickedGravePoint();
+            fillGraveInfo(graveData);
+          }
         },error: function (xhr, ajaxOptions, thrownError){}
       });
     }
 
     function fillGraveInfo(graveData){
-      $("#dim1 h3").html('1');
-      $("#dim1 h4").html('3');
-      $('#dim2 h4').html("2");
-      $('.death').html("1.1.1920");
+      //grave kind
+      switch(graveData[0]['type'].toLowerCase()){
+        case 'columbarium':
+          $('#grave_kind img').attr('src','img/grave_types/columbarium.png');
+          break;
+        case 'strooiweide':
+          $('#grave_kind img').attr('src','img/grave_types/strooiweide.png');
+          break;
+        case 'urnenveld':
+          $('#grave_kind img').attr('src','img/grave_types/urn.png');
+          break;
+        case 'graf':
+        case 'graf/urneveld':
+        default:
+          $('#grave_kind img').attr('src','img/grave_types/graf.png');
+          break;
+      }
+      //row
+      $("#row h4").text(graveData[0]['dim1']);
+      //number
+      $('#number h4').text(graveData[0]['dim2']);
 
+      //number of people
+      $('#numberOfPeople').text(graveData.length);
+      if(graveData.length == 1){
+        var correctedString = $('#people_count').html().replace('rusten', 'rust').replace('personen', 'persoon');
+        $('#people_count').html(correctedString);
+      }
+
+      //people
+      $.each(graveData, function(index, object) {
+          $('#people').append(personTemplate);
+          var lastAddedPerson = $('#people .person:last-child');
+
+          //name
+          var firstName = '';
+          var lastName = '';
+          if(object['firstName'].length > 0){firstName = object['firstName'].toLowerCase()};
+          if(object['familyName'].length > 0){lastName = object['familyName'].toLowerCase()};
+          lastAddedPerson.find('h5').text(firstName + ' ' + lastName);
+
+          //birth & death date
+          if(object['birthDate'] && object['birthDate'].length > 0){
+            lastAddedPerson.find('div').find('p').first().text(object['birthDate']);
+          }else{
+            lastAddedPerson.find('div').find('p').first().remove();
+            lastAddedPerson.find('div').find('p').last().css('width', '100%');
+          }
+          if(object['dateOfDeath'] && object['dateOfDeath'].length > 0){
+            lastAddedPerson.find('div').find('p').last().text(object['dateOfDeath']);
+          }else{
+            lastAddedPerson.find('div').find('p').last().remove();
+            lastAddedPerson.find('div').find('p').first().removeClass('border_right_green').css('width', '100%');
+          }
+      });
     }
     function clickedGravePoint(e){
       setWrapperHeight($(window).height());
       if(e){e.preventDefault();}
-      $('#close_map_detail_maplink').show();
-      if($('#grave_detail').hasClass('hide')){
-        $('#grave_detail').removeClass('hide');
-      }
+      $('#view_map').append(graveDetailTemplate);
+      bindEvents();
       //load persons
       //TODO:als er geen personen zijn verwijder $('#people')
+      $('#grave_detail_wrapper').css('height', $(window).height()-$('#grave_detail_wrapper').offset().top);
       $('#grave_detail').css('top', '100%').animate({
           top: defaultGraveDetailTop
-      }, 600);
+      }, 600, function(){
+        makeScroll('#grave_detail_wrapper');
+      });
     }
 
     function closeGraveDetail(e){
@@ -293,6 +356,8 @@ var Map = (function()
         if(!$('#filter').is(':focus')){
           setWrapperHeight(defaultWrapperHeight);
         }
+        $(this).remove();
+        $('#close_map_detail_maplink').remove();
       });
     }
 
@@ -302,10 +367,10 @@ var Map = (function()
     }
 
     function bindEvents(){;
-      $('#close_detail').on('click touchend', closeGraveDetail);
-      $('#back_button').on('click touchend', tappedBackButton);
-      $('#close_map_detail_maplink').on('click touchend', closeGraveDetail);
-      $('#view_map #filter').on('keyup', filterKeyUp);
+      $('#close_detail').unbind().on('click touchend', closeGraveDetail);
+      $('#back_button').unbind().on('click touchend', tappedBackButton);
+      $('#close_map_detail_maplink').unbind().on('click touchend', closeGraveDetail);
+      $('#view_map #filter').unbind().on('keyup', filterKeyUp);
     }
 
     //utilities

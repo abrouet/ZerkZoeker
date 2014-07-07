@@ -181,3 +181,8 @@ function getGraveId(municip, json, callback) {
 function getGraveLocation(municip, json, callback) {
 	municipVars[municip].extractGraveLoc(json, callback);
 }
+
+function makeScroll(selector){
+  var scroller = new IScroll(selector);
+  return scroller;
+}
