@@ -36,6 +36,7 @@ var municipVars = {
 		'mapServerURL' : 'http://www.govmaps.eu/arcgis/rest/services/WAR/WAR_begraafplaats/MapServer',
 		'graveLayerURL' : '/0',
 		'wkid' : 31370,
+		'tombcode' : 'grafcode',
 		'extractGraveId' : function(json, callback) {
 			var graveId;
 			graveId = json.attributes.grafcode;
@@ -53,6 +54,7 @@ var municipVars = {
 		'mapServerURL' : 'http://www.govmaps.eu/arcgis/rest/services/DEE/DEE_begraafplaatstile/MapServer',
 		'graveLayerURL' : '/2',
 		'wkid' : 31370,
+		'tombcode' : 'PERCEEL',
 		'extractGraveId' : function(json, callback) {
 			var graveId;
 			graveId = json.attributes.PERCEEL;
@@ -70,6 +72,7 @@ var municipVars = {
 		'mapServerURL' : 'http://www.govmaps.eu/arcgis/rest/services/AVE/AVE_GRAF/MapServer',
 		'graveLayerURL' : '/0',
 		'wkid' : 31370,
+		'tombcode' : 'GRAFXYZ',
 		'extractGraveId' : function(json, callback) {
 			var graveId = json.attributes.GRAFXYZ;
 			callback(graveId);

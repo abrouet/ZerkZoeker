@@ -2,8 +2,6 @@ var Map = (function()
 {
     var mapDivId = 'mapdiv'; // The id of the div in which to display the map
 
-    var Map;
-
     var cemetery; // the name of the location
     var location; // location info (as defined in functions.js)
     var municip; // Municipality info (as defined in functions.js)
@@ -16,9 +14,9 @@ var Map = (function()
       console.log('[Map.js] init');
 
       // Get all context info about cemetery and municipality
-      cemetery = $.localStorage.get('zz_location');
-      getLocationInfo(cemetery, function(response) {location = response;} );
-      getMunicipalityInfo(location.municipality, function(response) {municip = response;} );
+      cemetery = $.localStorage.get('zz_location'); // local storage contains which cemetery the user selected
+      getLocationInfo(cemetery, function(response) {location = response;} ); // call to functions.js which returns a JSON object with all location info
+      getMunicipalityInfo(location.municipality, function(response) {municip = response;} ); // call to functions.js which returns a JSON object with all municipality info
 
       //load template
       $('#view2').html('').css('left',0).load('templates/map.html', function(){
@@ -74,6 +72,7 @@ var Map = (function()
 
     function buildMap(e) {
       console.log('[Map.js] buildMap');
+      // The next call is from the ArcGIS API and makes sure dependencies are loaded before building the map
       require([
         // Required to build the map and fetch the layer with graves
         "esri/map",
@@ -96,8 +95,8 @@ var Map = (function()
         "esri/Color",
         // Required to wait for the Document Object to be ready before executing
         "dojo/domReady!"
-        ], function(Map,
-                    arcgisUtils,
+        ], function(Map,            // The API specifies how this call looks, first a list of all imports (as seen above),
+                    arcgisUtils,    // and now a 'callback' function with an argument for each import
                     FeatureLayer,
                     SpatialReference,
                     Point,
@@ -115,12 +114,11 @@ var Map = (function()
                     esriConfig,
                     Color) {
 
-          // Empty out the div to make sure the new map will fit in
+          // Empty out the div to make sure the new map has a clean workspace to build in
           $('#' + mapDivId).empty();
 
           // Fetch the graphics layers and add them to the map
           Map = new Map(mapDivId);
-          //Map.removeAllLayers();
           var layer = new esri.layers.ArcGISTiledMapServiceLayer(municip.mapServerURL);
           Map.addLayer(layer);
 
@@ -128,24 +126,25 @@ var Map = (function()
           var tombLayerURL = municip.mapServerURL + municip.graveLayerURL;
           var featureLayer = new FeatureLayer(tombLayerURL);
 
+          // Center at the starting location specified for this location
           Map.centerAndZoom(new Point(location.startCoords.x, location.startCoords.y, new SpatialReference(municip.wkid)), location.startCoords.zoom);
 
-          // Create the circle to display when clicking on the map
-
+          // Create the marker that appears upon clicking
           var locationMarkerUrl = 'img/icon_map_marker.png';
           var circleSymb = new PictureMarkerSymbol(locationMarkerUrl,35,35);
 
           // The circle which represents the perimeter in which to look for graves
           // this is defined here because it's used in multiple functions.
-          var circle;// Zooms and centers the map when clicking on it
+          var circle;
 
           // The function to execute when clicking on the map
           Map.on('click', function(evt){
+            // Center the map on the clicking point and zoom in to the max level
             Map.centerAndZoom(evt.mapPoint, 10);
-            // Create the geometric circle in which to search for graves
+            // Create the geometric circle in which to search for graves around the clicking point
             circle = new Circle({
-              center: evt.mapPoint,     // Centered on the point of clicking
-              radius: 0.6,              // Radius in which to look for graves
+              center: evt.mapPoint,     // Centered on the point of clicking, the point where the click registered
+              radius: 0.6,              // Radius in which to look for graves, not too big, not too small (keep smartphone users in mind)
               radiusUnit: 'esriMeters'  // The unit of the radius, in this case meters
             });
             // Clear the graphics on the map and add the new circle
@@ -156,7 +155,9 @@ var Map = (function()
 
             // Create a query for the FeatureLayer to search for graves within the perimeter
             var query = new Query();
+            // The query object can have a geometry object, in this case the circle
             query.geometry = circle.getExtent();
+            // We query the FeatureLayer about it's features, arguments are the query and the callback function
             featureLayer.queryFeatures(query, selectInBuffer);
           });
 
@@ -164,27 +165,40 @@ var Map = (function()
             //TODO: implement to enforce the boundaries of a specific map
           });
 
-          /** The selection function which fetches the GraveID from the FeatureLayer,
-          * this GraveID is needed to request the personal info about from the database.
-          */
+          /** 
+           * The selection function which fetches the GraveID from the FeatureLayer,
+           * this GraveID is needed to request the personal info about from the database.
+           */
           function selectInBuffer(response){
+            // Make sure a feature is found (aka: the features array is longer than 0)
             if(response.features.length > 0) {
               var feature = response.features[0];
+              // Next we fetch the object ID of the first feature
               // TODO: redirect dynamically to function.js; this did not work when tried earlier...
               if(location.municipality == 'AVE') {
-                fetchGraveId(feature.attributes.OBJECTID_1);
-              } else {
+                fetchGraveId(feature.attributes.OBJECTID_1); // On the Avelgem server, the object ID column has a different name; this has been tested
                 fetchGraveId(feature.attributes.OBJECTID);
               }
             }
           }
 
+          /**
+           * The map will query the FeatureLayer about the location of a certaing grave,
+           * and then zoom in on it.
+           *
+           */
           function goToGrave(graveId) {
+            // There is a slight delay specified here to allow the graphics layer to be constructed,
+            // this is required when a person is selected when the map is not yet loaded. The loading
+            // happens asynchronous from this function, the delay allows for the loading to be completed.
+            // We can assume that a 200ms loading time is enough for the loading to fully complete.
             setTimeout(function(){
               console.log['[Map.js] goToGrave'];
+              var tombcode = municip.tombcode;
+              var dirty = (new Date()).getTime();
               var graveLoc;
               $.ajax({
-                url:municip.mapServerURL + municip.graveLayerURL + "/query?where=grafcode='"+graveId+"'&f=json",
+                url:municip.mapServerURL + municip.graveLayerURL + "/query?where="+tombcode+"='"+graveId+"' AND "+dirty+"="+dirty+"&f=json",
                 async:true,
                 type:'GET',
                 dataType:'json',
@@ -208,13 +222,15 @@ var Map = (function()
             }, 200);
           }
 
-          if($.localStorage.isSet('zz_target')) {
+          // This will check if the local storage contains a target grave to go to,
+          // if so, the map will go to the grave, and then delete the variable.
+          if(!$.localStorage.isEmpty('zz_target')) {
             console.log('[Map.js] localStorage("zz_target") = ' + $.localStorage.get('zz_target'));
             goToGrave($.localStorage.get('zz_target'));
             $.localStorage.remove('zz_target');
           }
 
-      });
+      }); // require() end
 
       function fetchGraveId(objectId) {
         console.log(objectId);
@@ -230,7 +246,7 @@ var Map = (function()
           });
       }
 
-    }
+    } // BuildMap end
 
     function loadGraveData(graveId){
       ///getPersonByNameAtCemetery/
