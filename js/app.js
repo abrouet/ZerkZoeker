@@ -13,7 +13,7 @@ var home, map, transitionDuration;
       transitionDuration = 500;
 
       //Create View
-      home = new Home();
+      //home = new Home();
 
       //set default position wrapper
       $("#wrapper").css('left',-$(window).width());
@@ -21,6 +21,8 @@ var home, map, transitionDuration;
       //dispatched events
       $(window).on("BACK_TO_HOME", backToHomeTransition);
       $(window).on("GO_TO_MAP", goToHomeTransition);
+
+      $(window).trigger("BACK_TO_HOME");
     }
 
     function backToHomeTransition(e){
