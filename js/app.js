@@ -12,11 +12,8 @@ var home, map, transitionDuration;
       document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
       transitionDuration = 500;
 
-      //$.localStorage.set('zz_location', 'Waregem de barakke');
-
       //Create View
-      map = new Map();
-      //home = new Home();
+      home = new Home();
 
       //set default position wrapper
       $("#wrapper").css('left',-$(window).width());
@@ -24,9 +21,6 @@ var home, map, transitionDuration;
       //dispatched events
       $(window).on("BACK_TO_HOME", backToHomeTransition);
       $(window).on("GO_TO_MAP", goToHomeTransition);
-
-
-      //$(window).on('click', function(e) {$(window).trigger({type:'personSelected',graveId:'156617_0004_0002_0027'})});
     }
 
     function backToHomeTransition(e){

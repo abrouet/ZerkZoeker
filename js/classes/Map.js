@@ -185,6 +185,7 @@ var Map = (function()
               // TODO: redirect dynamically to function.js; this did not work when tried earlier...
               if(location.municipality == 'AVE') {
                 fetchGraveId(feature.attributes.OBJECTID_1); // On the Avelgem server, the object ID column has a different name; this has been tested
+              } else {
                 fetchGraveId(feature.attributes.OBJECTID);
               }
             }
@@ -202,11 +203,10 @@ var Map = (function()
             // We can assume that a 200ms loading time is enough for the loading to fully complete.
             setTimeout(function(){
               console.log['[Map.js] goToGrave'];
-              var tombcode = municip.tombcode;
               var dirty = (new Date()).getTime();
               var graveLoc;
               $.ajax({
-                url:municip.mapServerURL + municip.graveLayerURL + "/query?where="+tombcode+"='"+graveId+"' AND "+dirty+"="+dirty+"&f=json",
+                url:municip.mapServerURL+municip.graveLayerURL+"/query?where="+municip.tombcode+"='"+graveId+"' AND "+dirty+"="+dirty+"&f=json",
                 async:true,
                 type:'GET',
                 dataType:'json',
