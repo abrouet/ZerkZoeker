@@ -42,41 +42,115 @@ var Map = (function()
       });
     }
 
-    function filterKeyUp(e)
-    {
-        setWrapperHeight($(window).height());
-        if(parseFloat($('#grave_detail').css('top')) < $(window).height()){
-          closeGraveDetail();
-        }
-        if($('#names_wrapper').hasClass('hide')){
-          $('#names_wrapper').removeClass('hide');
-        }
-
-        // Retrieve the input field text and reset the count to zero
-        var name = $(this).val();
-
-        if(name.length == 0){
-          setWrapperHeight(defaultWrapperHeight);
-          $('#names_wrapper').addClass('hide');
-        }
-
-        // Loop through the comment list
-        $('.names li').each(function(){
-            if ($(this).text().search(new RegExp(name, 'i')) < 0) {
-                $(this).hide();
-            } else {
-                var html = addSpanToFilterResult($(this), name);
-                $('.names .border_radius_bottom').removeClass('border_radius_bottom');
-                $(this).html(html).show().addClass('border_radius_bottom');
-            }
-        });
-
-        if(name == 0){
-            $('.names li').each(function(){
-                $(this).hide();
+    function filterKeyUp(e){
+      var search = $(this).val();
+      if(search.length == 1){
+        //get all names starting with first letter entered
+        var url = 'backend/index.php/getPersonByName/'+search;//by name or year
+        $.ajax({
+          dataType: "json",
+          type:'GET',
+          url:url,
+          success: function(names){
+            arrNames = names;
+            $.get("templates/person_listitem.html", function(data){
+              personTemplate = data;
+              loadedResults = 0;
+              updateNameList(search);
+              resultsScroller = makeScroll('#view_home #wrapper');
             });
-        }
+          },error: function (xhr, ajaxOptions, thrownError){}
+        });
+      }else if(search.length > 0){
+        //update cities
+        updateNameList(search);
+        resultsScroller = makeScroll('#view_home #wrapper');
+      }else{
+        $("#view_home .location").each(function(index, value) {
+          $(this).html($(this).html().replace('<span>','').replace('</span>','')).show();
+        });
+        $("#view_home .person").remove();
+        resultsScroller = makeScroll('#view_home #wrapper');
+      }
     }
+
+    function updateNameList(search){
+      $("#view_home .person").remove();
+      $("#view_home .show_more_results").remove();
+      createNames(search);
+      if(moreResultsAvailable){
+        var html = personTemplate.replace('name', 'show more results').replace('person','show_more_results border_radius_bottom');
+        $('#results').append(html);
+        $('.show_more_results').on('click touchend', showMoreResults);
+        $('.border_radius_bottom:not(:last-child)').removeClass('border_radius_bottom');
+      }
+    }
+
+    function createNames(search){
+      numResultsToShow = 0;
+      totalResults = 0;
+      $('.show_more_results').remove();
+      for(var j = 0; j < arrNames.length-loadedResults; j++){
+        var firstName = '';
+        var id = loadedResults+j;
+        if(arrNames[id]['firstName']){
+          firstName = arrNames[id]['firstName'].toLowerCase();
+        }
+        var lastName = '';
+        if(arrNames[id]['familyName']){
+          lastName = arrNames[id]['familyName'].toLowerCase();
+        }
+        var birthYear = '';
+        if(arrNames[id]['birthDate']){
+          birthYear = arrNames[id]['birthDate'].substring(0, 4);
+        }
+        var deathYear = '';
+        if(arrNames[id]['dateOfDeath']){
+          deathYear = arrNames[id]['dateOfDeath'].substring(0, 4);
+        }
+        var regExpCheckString = firstName + ' ' + ' ' + lastName + ' ' + birthYear + ' ' + deathYear;
+
+        if((regExpCheckString.indexOf(search.toLowerCase()) >= 0)){
+          totalResults++;
+          //console.log('test');
+          if(numResultsToShow < loadedResults+30 && numResultsToShow < totalResults){
+            var name = '';
+            if(arrNames[id]['firstName'] && arrNames[id]['familyName']){
+              name = arrNames[id]['firstName'].toLowerCase()+' '+arrNames[id]['familyName'].toLowerCase();
+            }else if(arrNames[id]['firstName']){
+              name = arrNames[id]['firstName'].toLowerCase();
+            }else if(arrNames[id]['familyName']){
+              name = arrNames[id]['familyName'].toLowerCase();
+            }
+            if(name.length > 0){
+              var html = personTemplate.replace('name', name);
+              if($('.person').length == 0){
+                $('#results').prepend(html);
+              }else{
+                $('.person').last().after(html);
+              }
+              numResultsToShow++;
+              totalResults = numResultsToShow;
+            }
+          }
+        }
+      }
+      loadedResults = $('.person').length;
+      if(loadedResults < totalResults){
+        moreResultsAvailable = true;
+      }else{
+        moreResultsAvailable = false;
+      }
+      $("#view_home .person").each(function(index, value) {
+          if ($(this).text().search(new RegExp(search, "i")) >= 0) {
+            var html = addSpanToFilterResult($(this), search);
+            $("#view_home .person").removeClass('border_radius_bottom');
+            $(this).html(html).addClass("border_radius_bottom");
+          }
+      });
+      $('.person').unbind().on('click touchend', loadGrave);
+    }
+
 
     function buildMap(e) {
       console.log('[Map.js] buildMap');
@@ -275,6 +349,37 @@ var Map = (function()
       });
     }
 
+    function loadGrave(e){
+      e.preventDefault();
+      console.log($(e.target).text());
+
+      //storage.set('zz_location',$(this).text());
+      //$(window).trigger("GO_TO_MAP");
+
+      var url = 'backend/index.php/getPersonByName/' + encodeURIComponent($(e.target).text());
+      console.log(url);
+      $.ajax({
+        dataType: "json",
+        type:'GET',
+        url:url,
+        success: function(pers){
+          console.log(pers[0]['cemetery']);
+
+          //save cemetery in local storage
+          //ns = $.initNamespaceStorage('zz_location');
+          //ns.localStorage;
+          storage = $.localStorage;
+          storage.set('zz_location',pers[0]['cemetery']);
+          storage.set('zz_target', pers[0]['code']);
+
+          $(window).trigger("GO_TO_MAP");
+
+        },error: function (xhr, ajaxOptions, thrownError){}
+      });
+
+    }
+
+
     function fillGraveInfo(graveData){
       //grave kind
       switch(graveData[0]['type'].toLowerCase()){
@@ -364,6 +469,14 @@ var Map = (function()
     function tappedBackButton(e){
       if(e){e.preventDefault();}
       $(window).trigger('BACK_TO_HOME');
+    }
+
+    function showMoreResults(e){
+        e.preventDefault();
+        createNames($("#view_home #filter").val());
+        resultsScroller = makeScroll('#view_home #wrapper');
+        console.log($(this).position().top);
+        resultsScroller.scrollTo(0, -$(this).offset().top);
     }
 
     function bindEvents(){;
