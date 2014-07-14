@@ -47,36 +47,37 @@ var Map = (function()
       if(search.length == 1){
         //get all names starting with first letter entered
         var url = 'backend/index.php/getPersonByName/'+search;//by name or year
+        console.log(url);
         $.ajax({
           dataType: "json",
           type:'GET',
           url:url,
           success: function(names){
+            console.log(names);
             arrNames = names;
             $.get("templates/person_listitem.html", function(data){
               personTemplate = data;
               loadedResults = 0;
               updateNameList(search);
-              resultsScroller = makeScroll('#view_home #wrapper');
+              resultsScroller = makeScroll('#view_map #wrapper');
             });
           },error: function (xhr, ajaxOptions, thrownError){}
         });
       }else if(search.length > 0){
-        //update cities
         updateNameList(search);
-        resultsScroller = makeScroll('#view_home #wrapper');
+        resultsScroller = makeScroll('#view_map #wrapper');
       }else{
-        $("#view_home .location").each(function(index, value) {
+        $("#view_map .location").each(function(index, value) {
           $(this).html($(this).html().replace('<span>','').replace('</span>','')).show();
         });
-        $("#view_home .person").remove();
-        resultsScroller = makeScroll('#view_home #wrapper');
+        $("#view_map .person").remove();
+        resultsScroller = makeScroll('#view_map #wrapper');
       }
     }
 
     function updateNameList(search){
-      $("#view_home .person").remove();
-      $("#view_home .show_more_results").remove();
+      $("#view_map .person").remove();
+      $("#view_map .show_more_results").remove();
       createNames(search);
       if(moreResultsAvailable){
         var html = personTemplate.replace('name', 'show more results').replace('person','show_more_results border_radius_bottom');
@@ -141,10 +142,10 @@ var Map = (function()
       }else{
         moreResultsAvailable = false;
       }
-      $("#view_home .person").each(function(index, value) {
+      $("#view_map .person").each(function(index, value) {
           if ($(this).text().search(new RegExp(search, "i")) >= 0) {
             var html = addSpanToFilterResult($(this), search);
-            $("#view_home .person").removeClass('border_radius_bottom');
+            $("#view_map .person").removeClass('border_radius_bottom');
             $(this).html(html).addClass("border_radius_bottom");
           }
       });
@@ -473,8 +474,8 @@ var Map = (function()
 
     function showMoreResults(e){
         e.preventDefault();
-        createNames($("#view_home #filter").val());
-        resultsScroller = makeScroll('#view_home #wrapper');
+        createNames($("#view_map #filter").val());
+        resultsScroller = makeScroll('#view_map #wrapper');
         console.log($(this).position().top);
         resultsScroller.scrollTo(0, -$(this).offset().top);
     }
