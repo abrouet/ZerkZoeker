@@ -47,13 +47,11 @@ var Map = (function()
       if(search.length == 1){
         //get all names starting with first letter entered
         var url = 'backend/index.php/getPersonByName/'+search;//by name or year
-        console.log(url);
         $.ajax({
           dataType: "json",
           type:'GET',
           url:url,
           success: function(names){
-            console.log(names);
             arrNames = names;
             $.get("templates/person_listitem.html", function(data){
               personTemplate = data;
