@@ -1,7 +1,8 @@
 var Map = (function()
 {
+    var resultsScroller, arrNames, personTemplate, numResultsToShow, moreResultsAvailable, totalResults, loadedResults;
     var mapDivId = 'mapdiv'; // The id of the div in which to display the map
-    
+
     var graveDetailTemplate, personTemplate;
 
     var cemetery; // the name of the location
@@ -46,12 +47,13 @@ var Map = (function()
       var search = $(this).val();
       if(search.length == 1){
         //get all names starting with first letter entered
-        var url = 'backend/index.php/getPersonByName/'+search;//by name or year
+        var url = 'backend/index.php/getPersonByNameAtCemetery/'+$.localStorage.get('zz_location')+'/'+search;//by name or year
         $.ajax({
           dataType: "json",
           type:'GET',
           url:url,
           success: function(names){
+            console.log('ajax get names success: '+names);
             arrNames = names;
             $.get("templates/person_listitem.html", function(data){
               personTemplate = data;
@@ -122,6 +124,7 @@ var Map = (function()
               name = arrNames[id]['familyName'].toLowerCase();
             }
             if(name.length > 0){
+              console.log('add person');
               var html = personTemplate.replace('name', name);
               if($('.person').length == 0){
                 $('#results').prepend(html);
@@ -134,6 +137,7 @@ var Map = (function()
           }
         }
       }
+      setWrapperHeight($(window).height());
       loadedResults = $('.person').length;
       if(loadedResults < totalResults){
         moreResultsAvailable = true;
@@ -246,7 +250,7 @@ var Map = (function()
             //TODO: implement to enforce the boundaries of a specific map
           });
 
-          /** 
+          /**
            * The selection function which fetches the GraveID from the FeatureLayer,
            * this GraveID is needed to request the personal info about from the database.
            */

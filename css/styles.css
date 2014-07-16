@@ -108,7 +108,7 @@ ul{
   padding-top: 25px;
 }
 
-#view_home #wrapper, #view_map #names_wrapper{
+#view_home #wrapper, #view_map #wrapper{
   position: absolute;
   z-index: 1;
   overflow: hidden;
