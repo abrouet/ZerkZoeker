@@ -17,6 +17,8 @@ var Home = (function()
           type:'GET',
           url:url,
           success: function(cemeteries){
+            $('#scroller li').remove();
+
             var cemeteriesList = '<ul>';
             $('#scroller').append('<ul id="results"></ul>');
             $.get("templates/location.html", function(data){
