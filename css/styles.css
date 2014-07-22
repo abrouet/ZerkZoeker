@@ -123,6 +123,10 @@ ul{
   width: 100%;
 }
 
+#view_map #wrapper #scroller{
+    width: 50%;
+}
+
 #results, #names{
   width: 86%;
   margin: 0 auto;
