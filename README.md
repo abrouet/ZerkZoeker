@@ -1,4 +1,4 @@
-Leiedal2
+ZerkZoeker
 ========
 
 ## Authors
@@ -20,7 +20,7 @@ This project is part of #oSoc14.
 ### Backend
 * Uses Silex, composer file included.
 * Database needed, definitions included in database.sql ; designed and tested for mariadb / mysql.
-* create config.php file containing location and login of database. See backend/config.php for a template.
+* create config.php file containing location and login of database. See backend/configTemplate.php for a template.
 
 ## Doc
 View doc/Backend.txt for more information about the backend.
