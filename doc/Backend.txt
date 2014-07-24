@@ -1,0 +1,92 @@
+**************
+*Installation*
+**************
+
+The backend uses silex, to install do "composer install" in the backend folder.
+
+
+****************************
+**Functions of the backend**
+****************************
+
+---------------------
+-GET Persons by code-
+---------------------
+
+-> /getPersonByCode/{code}
+Returns the information about the person corresponding with the code in any graveyard
+
+-> /getPersonByCodeAtCemetery/{cemetery}/{code}
+Same as above, but only in one cemetery, cemetery.
+
+----------------------------
+-GET Persons by Name / year-
+----------------------------
+
+-> /getPersonByName/{name}
+Returns a list of person that matches the name and/or year of death.
+e.g. /getPersonByName/1992 will return all persons that died in 1992
+
+-> /getPersonByNameAtCemetery/{cemetery}/{name}
+Same as above but only in 1 graveyard.
+
+----------------
+-GET cemeteries-
+----------------
+
+-> /getCemetery/{cemetery}
+Return the information of a cemetery.
+
+-> /getCemeteries
+Returns a list of all cemeteries.
+
+**********************
+**Objects of backend**
+**********************
+
+-Cemetery-
+
+{  
+	"cemetery":"Avelgem",
+	"dim1Name":"Park",
+	"dim2Name":"Wegel",
+	"dim3Name":"Nummer",
+	"dim4Name":"Letter"
+}
+
+cemetery : name of the cemetery
+dim1Name, dim2Name, dim3Name, dim4Name: 
+	Because all cemetery have other locations systems; 
+	e.g. cemetery one uses road 5 number 3 to point at a grave while cemetery Y might use section 3, row 2, letter B. 
+	In order to solve this, the locations are stored as dim1 , dim2, ... and the names of the dimensions e.g. row, letter , ...
+	are stored in dim1Name, ...
+
+-> Person
+{  
+	"id":"6685484",
+	"code":"156665_0001_0071_0000",
+	"municipality":"Waregem",
+	"cemetery":"Ooigemstraat",
+	"type":"graf",
+	"firstName":"Adrienne Maria",
+	"familyName":"Vandermeulen",
+	"dateOfDeath":"1992-09-17",
+	"dim1":"1",
+	"dim2":"",
+	"dim3":"71",
+	"dim4":"",
+	"dim1Name":"Perk",
+	"dim2Name":"Rij",
+	"dim3Name":"Nummer",
+	"dim4Name":"Columbarium"
+}
+id : id of the person
+code : the code of the grave
+municipality: the municipality of the cemetery
+cemetery: name of the cemetery
+type: type of the grave
+firstName: firstname of the person
+familyName: lastname of the person
+dateOfDeath: date of death
+dim1, dim2, dim3, dim4 : see above
+dim1Name, dim2Name, dim3Name, dim4Name: see above
